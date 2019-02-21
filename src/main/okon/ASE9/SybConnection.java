@@ -16,28 +16,22 @@ public class SybConnection implements Closeable {
     }
 
     public Message execute() {
-        //String sql = "sp_sysmon '00:00:15', kernel";
-        String sql = "{call sp_sysmon '00:00:15', kernel}";
-        String text = null;
+        String sql = "{call sp_sysmon '00:00:05', kernel}";
+        StringBuffer text = new StringBuffer();
 
-        //try (Statement stmt = connection.createStatement()) {
-        try (CallableStatement callableStatement = connection.prepareCall(sql);
-             ResultSet result = callableStatement.executeQuery()) {
+        try (CallableStatement stmt = connection.prepareCall(sql)){
+            stmt.executeUpdate();
+            SQLWarning connectionWarning = stmt.getWarnings();
 
-            System.out.println("Jestem w while przed getMetaData ");
-            //ResultSetMetaData rsmd = rs.getMetaData();
-            //System.out.println("Po getMetaData: kolumna 1: ");
-            //String name = rsmd.getColumnName(1);
-            //while (rs.next()) {
-                //rs.getMetaData();
-
-                //text = rs.getString(0);
-            //}
+            do {
+                text.append(connectionWarning.getMessage()).append("\n");
+                connectionWarning = connectionWarning.getNextWarning();
+            } while (connectionWarning != null);
         } catch (SQLException e) {
             throw new AppException(e);
         }
 
-        return new Message(text);
+        return new Message(text.toString());
         //return new Message(startingFreeCacheSize, endingFreeCacheSize, startTime, endTime);
     }
 
