@@ -3,6 +3,8 @@ package okon.ASE9;
 import javax.sql.DataSource;
 import java.io.Closeable;
 import java.sql.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SybConnection implements Closeable {
     private final Connection connection;
@@ -16,68 +18,46 @@ public class SybConnection implements Closeable {
     }
 
     public Message execute() {
-        String sql = "{call sp_sysmon '00:00:05', kernel}";
-        StringBuffer text = new StringBuffer();
+        SQLWarning warnings = executeStoredProcedure();
+        String response = changeToText(warnings);
 
-        try (CallableStatement stmt = connection.prepareCall(sql)){
-            stmt.executeUpdate();
-            SQLWarning connectionWarning = stmt.getWarnings();
-
-            do {
-                text.append(connectionWarning.getMessage()).append("\n");
-                connectionWarning = connectionWarning.getNextWarning();
-            } while (connectionWarning != null);
-        } catch (SQLException e) {
-            throw new AppException(e);
-        }
-
-        return new Message(text.toString());
+        return new Message(checkServerName(response));
         //return new Message(startingFreeCacheSize, endingFreeCacheSize, startTime, endTime);
     }
 
-    /*public Message execute() {
-        int startingFreeCacheSize = 0;
-        int endingFreeCacheSize = 0;
-        LocalDateTime startTime = null;
-        LocalDateTime endTime = null;
+    public SQLWarning executeStoredProcedure() {
+        //String sql = "{call sp_sysmon '00:00:05', kernel}";
+        String sql = "sp_sysmon '00:00:05', kernel";
+        SQLWarning response = null;
 
-        startingFreeCacheSize = checkFreeCacheSize();
-        startTime = getTimeStamp();
-        freeUnusedCache();
-        endTime = getTimeStamp();
-        endingFreeCacheSize = checkFreeCacheSize();
-
-        return new Message(startingFreeCacheSize, endingFreeCacheSize, startTime, endTime);
-    }*/
-
-    /*public int checkFreeCacheSize() {
-        String sql = "sp_monitorconfig 'procedure cache_size'";
-        int freeCacheSize = 0;
-
-        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                freeCacheSize = rs.getInt("Num_free");
-            }
+        try (Statement stmt = connection.createStatement()){
+            stmt.executeUpdate(sql);
+            response = stmt.getWarnings();
         } catch (SQLException e) {
             throw new AppException(e);
         }
 
-        return freeCacheSize;
-    }*/
+        return response;
+    }
 
-    /*public LocalDateTime getTimeStamp() {
-        return LocalDateTime.now();
-    }*/
+    public String changeToText(SQLWarning response) {
+        StringBuilder warnings = new StringBuilder();
 
-    /*public void freeUnusedCache() {
-        String sql = "dbcc proc_cache(free_unused)";
+        do {
+            warnings.append(response.getMessage().trim()).append("\n");
+            response = response.getNextWarning();
+        } while (response != null);
 
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute(sql);
-        } catch (SQLException e) {
-            throw new AppException(e);
-        }
-    }*/
+        return warnings.toString();
+    }
+
+    public String checkServerName(String response) {
+        Pattern pattern = Pattern.compile("Server Name:\\s+(\\w+)\n");
+        Matcher matcher = pattern.matcher(response);
+        matcher.find();
+
+        return matcher.group(1);
+    }
 
     @Override
     public void close() {
