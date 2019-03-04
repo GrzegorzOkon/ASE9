@@ -2,6 +2,8 @@ package okon.ASE9;
 
 import javax.sql.DataSource;
 
+import java.util.List;
+
 import static okon.ASE9.ASE9App.connectionFactory;
 import static okon.ASE9.ASE9App.dataSourceQueue;
 import static okon.ASE9.ASE9App.messageList;
@@ -20,17 +22,18 @@ public class MessageProducerThread extends Thread {
             }
 
             if (job != null) {
-                Message message = displayKernelPerformanceInformation(job);
+                List<Message> messages = displayKernelPerformanceInformation(job);
 
                 synchronized (messageList) {
-                    messageList.add(message);
+                    for (Message message : messages)
+                        messageList.add(message);
                 }
             }
         }
     }
 
-    public Message displayKernelPerformanceInformation(DataSource dataSource) {
-        Message message = null;
+    public List<Message> displayKernelPerformanceInformation(DataSource dataSource) {
+        List<Message> message = null;
 
         try (SybConnection connection = connectionFactory.build(dataSource)) {
             message = connection.execute();

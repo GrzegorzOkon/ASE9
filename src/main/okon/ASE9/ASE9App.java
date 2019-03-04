@@ -59,6 +59,12 @@ public class ASE9App {
                 List<byte[]> formattedMessage = new MessageFormatter(message).format();
 
                 out.write(formattedMessage.get(0));
+                out.write(formattedMessage.get(1));
+                out.write(formattedMessage.get(2));
+                out.write(formattedMessage.get(3));
+                out.write(formattedMessage.get(4));
+                out.write(formattedMessage.get(5));
+                out.write(System.getProperty("line.separator").getBytes());
                 out.write(System.getProperty("line.separator").getBytes());
                 //out.write(formattedMessage.get(1));
                 //out.write(System.getProperty("line.separator").getBytes());

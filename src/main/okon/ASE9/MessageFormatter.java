@@ -13,7 +13,12 @@ public class MessageFormatter {
     public List<byte[]> format() {
         List<byte[]> text = new ArrayList<>();
 
-        text.add(message.getTestText().getBytes());
+        text.add(message.getServerName().getBytes());
+        text.add(message.getThreadPool().getBytes());
+        text.add(message.getUserBusy().getBytes());
+        text.add(message.getSystemBusy().getBytes());
+        text.add(message.getIoBusy().getBytes());
+        text.add(message.getIdle().getBytes());
         //text.add(message.getDescription().getBytes());
         //text.add((message.getUrl() + " ****** " + (int) (((float) message.getCorrectChecks() / (float) message.getAllChecks()) * 100) + " %").getBytes());
 
