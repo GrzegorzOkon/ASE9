@@ -54,20 +54,20 @@ public class ASE9App {
     }
 
     public void save(String fileName, List<Message> content) {
-        try (FileOutputStream out = new FileOutputStream(new java.io.File(fileName))) {
-            for(Message message : content) {
-                List<byte[]> formattedMessage = new MessageFormatter(message).format();
+        String caption = "Serwer Name          Engine Utilization (Tick %)   User Busy   System Busy    I/O Busy        Idle ";
+        String lines = "-------------------  -------------------------  ------------  ------------  ----------  ----------";
 
-                out.write(formattedMessage.get(0));
-                out.write(formattedMessage.get(1));
-                out.write(formattedMessage.get(2));
-                out.write(formattedMessage.get(3));
-                out.write(formattedMessage.get(4));
-                out.write(formattedMessage.get(5));
+        try (FileOutputStream out = new FileOutputStream(new java.io.File(fileName))) {
+            out.write(caption.getBytes());
+            out.write(System.getProperty("line.separator").getBytes());
+            out.write(lines.getBytes());
+            out.write(System.getProperty("line.separator").getBytes());
+
+            for(Message message : content) {
+                String formattedMessage = new MessageFormatter(message).format();
+
+                out.write(formattedMessage.getBytes());
                 out.write(System.getProperty("line.separator").getBytes());
-                out.write(System.getProperty("line.separator").getBytes());
-                //out.write(formattedMessage.get(1));
-                //out.write(System.getProperty("line.separator").getBytes());
             }
         } catch (Exception e) {
             throw new AppException(e);

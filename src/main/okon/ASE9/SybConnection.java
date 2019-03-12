@@ -40,8 +40,7 @@ public class SybConnection implements Closeable {
     }
 
     public SQLWarning executeStoredProcedure() {
-        //String sql = "{call sp_sysmon '00:00:05', kernel}";
-        String sql = "sp_sysmon '00:00:05', kernel";
+        String sql = "sp_sysmon '00:00:15', kernel";
         SQLWarning response = null;
 
         try (Statement stmt = connection.createStatement()){

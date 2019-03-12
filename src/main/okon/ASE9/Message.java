@@ -8,8 +8,7 @@ public class Message {
     private String ioBusy;
     private String idle;
 
-    public Message() {
-    }
+    public Message() {}
 
     public String getServerName() {
         return serverName;
