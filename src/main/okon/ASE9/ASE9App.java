@@ -21,7 +21,7 @@ public class ASE9App {
 
         dataSourceQueue = ase9_app.loadConfiguration("./settings/config.xml");
 
-        ase9_app.startThreadPool(2);
+        ase9_app.startThreadPool(4);
 
         ase9_app.save("ASE9.txt", messageList);
     }
