@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Queue;
 
 public class ASE9App {
-    static final ConnectionFactory connectionFactory = new ConnectionFactory();
     static Queue<DataSource> dataSourceQueue;
     static final List<Message> messageList = new ArrayList();
 
