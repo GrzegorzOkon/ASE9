@@ -1,48 +1,65 @@
 package okon.ASE9;
 
-import org.w3c.dom.Element;
+import okon.ASE9.config.AuthorizationConfigReader;
+import okon.ASE9.config.ServerConfigReader;
+import okon.ASE9.exception.AppException;
 
-import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class ASE9App {
-    static Queue<DataSource> dataSourceQueue;
-    static final List<Message> messageList = new ArrayList();
+    static final Queue<Job> jobs = new LinkedList<>();
+    static final List<Message> messages = new ArrayList();
 
-    private final DataSourceBuilder dataSourceBuilder = new DataSourceBuilder();
-
-    public static void main (String args[]) {
-        ASE9App ase9_app = new ASE9App();
-
-        dataSourceQueue = ase9_app.loadConfiguration("./settings/config.xml");
-
-        ase9_app.startThreadPool(4);
-
-        ase9_app.save("ASE9.txt", messageList);
+    public static void main(String[] args) {
+        initializeQueue();
+        startThreadPool(4);
+        print();
     }
 
-    private Queue<DataSource> loadConfiguration(String pathname) {
-        ConfigurationParser parser = new ConfigurationParser();
-        Element root = parser.parseXml(new File(pathname));
-
-        return dataSourceBuilder.build(root);
+    static void initializeQueue() {
+        List<Server> servers = ServerConfigReader.readParams((new File("./config/servers.xml")));
+        List<Authorization> authorizations = AuthorizationConfigReader.readParams((new File("./config/server-auth.xml")));
+        //createJobs(databases);
     }
 
-    private void startThreadPool(int threadSum) {
+    static void createJobs(List<Server> servers, List<Authorization> authorizations) {
+        for (Server server : servers) {
+            Job job = new Job(server, matchAuthorizationToServer(server, authorizations));
+            jobs.add(job);
+        }
+    }
+
+    static Authorization matchAuthorizationToServer(Server server, List<Authorization> authorizations) {
+        if (isAuthorizationPresent(server)) {
+            for (Authorization authorization : authorizations) {
+                if (server.getAuthorizationInterface().equals(authorization.getAuthorizationInterface())) {
+                    return authorization;
+                }
+            }
+        }
+        return null;
+    }
+
+    static boolean isAuthorizationPresent(Server server) {
+        if (!server.getAuthorizationInterface().equals("")) {
+            return true;
+        }
+        return false;
+    }
+
+    static void startThreadPool(int threadSum) {
         Thread[] threads = new Thread[threadSum];
-
         for (int i = 0; i < threadSum; i++) {
             threads[i] = new MessageProducerThread();
         }
-
         for (int i = 0; i < threadSum; i++) {
             threads[i].start();
         }
-
         for (int i = 0; i < threadSum; i++) {
             try {
                 threads[i].join();
@@ -52,7 +69,13 @@ public class ASE9App {
         }
     }
 
-    public void save(String fileName, List<Message> content) {
+    static void print() {
+        //printToConsole();
+        //printToFile();
+        save("ASE9.txt", messages);
+    }
+
+    static void save(String fileName, List<Message> content) {
         String caption = "Serwer Name          Engine Utilization (Tick %)   User Busy   System Busy    I/O Busy        Idle ";
         String lines = "-------------------  -------------------------  ------------  ------------  ----------  ----------";
 

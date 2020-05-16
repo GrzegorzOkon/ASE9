@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
-<params>
+<servers>
     <server>
         <db_alias>aaa</db_alias>
         <db_ip>x.x.x.x</db_ip>
         <db_port>xxxx</db_port>
-        <db_user>user</db_user>
-        <db_pswd>password</db_pswd>
+        <db_setting type = "processor pool">yes</db_setting>
+        <auth_interface>db-user-auth</auth_interface>
     </server>
     <server>
         <db_alias>bbb</db_alias>
         <db_ip>x.x.x.x</db_ip>
         <db_port>xxxx</db_port>
-        <db_user>user</db_user>
-        <db_pswd>password</db_pswd>
+        <db_setting type = "processor pool">no</db_setting>
+        <auth_interface>db-user-auth</auth_interface>
     </server>
-</params>
+</servers>
