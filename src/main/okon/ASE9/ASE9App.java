@@ -5,7 +5,8 @@ import okon.ASE9.config.ServerConfigReader;
 import okon.ASE9.exception.AppException;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class ASE9App {
     static void initializeQueue() {
         List<Server> servers = ServerConfigReader.readParams((new File("./config/servers.xml")));
         List<Authorization> authorizations = AuthorizationConfigReader.readParams((new File("./config/server-auth.xml")));
-        //createJobs(databases);
+        createJobs(servers, authorizations);
     }
 
     static void createJobs(List<Server> servers, List<Authorization> authorizations) {
@@ -70,29 +71,43 @@ public class ASE9App {
     }
 
     static void print() {
-        //printToConsole();
-        //printToFile();
-        save("ASE9.txt", messages);
+        printToConsole();
+        printToFile();
     }
 
-    static void save(String fileName, List<Message> content) {
+    static void printToConsole() {
         String caption = "Serwer Name          Engine Utilization (Tick %)   User Busy   System Busy    I/O Busy        Idle ";
         String lines = "-------------------  -------------------------  ------------  ------------  ----------  ----------";
+        System.out.println(caption);
+        System.out.println(lines);
+        for (Message message : messages) {
+            String formattedMessage = new MessageFormatter(message).format();
+            System.out.println(formattedMessage);
+        }
+    }
 
-        try (FileOutputStream out = new FileOutputStream(new java.io.File(fileName))) {
-            out.write(caption.getBytes());
-            out.write(System.getProperty("line.separator").getBytes());
-            out.write(lines.getBytes());
-            out.write(System.getProperty("line.separator").getBytes());
-
-            for(Message message : content) {
+    static void printToFile() {
+        String caption = "Serwer Name          Engine Utilization (Tick %)   User Busy   System Busy    I/O Busy        Idle ";
+        String lines = "-------------------  -------------------------  ------------  ------------  ----------  ----------";
+        try (Writer out = new FileWriter(new java.io.File(ASE9App.getJarFileName() + ".txt"))) {
+            out.write(caption);
+            out.write(System.getProperty("line.separator"));
+            out.write(lines);
+            out.write(System.getProperty("line.separator"));
+            for (Message message : messages) {
                 String formattedMessage = new MessageFormatter(message).format();
-
-                out.write(formattedMessage.getBytes());
-                out.write(System.getProperty("line.separator").getBytes());
+                out.write(formattedMessage);
+                out.write(System.getProperty("line.separator"));
             }
         } catch (Exception e) {
             throw new AppException(e);
         }
+    }
+
+    static String getJarFileName() {
+        String path = ASE9App.class.getResource(ASE9App.class.getSimpleName() + ".class").getFile();
+        path = path.substring(0, path.lastIndexOf('!'));
+        path = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf('.'));
+        return path;
     }
 }
