@@ -24,9 +24,9 @@ sourceSets {
         java.srcDirs = ['src\\main']
     }
 
-    /*test {
+    test {
         java.srcDirs = ['src\\test']
-    }*/
+    }
 }
 
 jar {

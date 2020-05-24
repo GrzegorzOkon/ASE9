@@ -6,12 +6,12 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class MesageFormatterTest {
-    Message message;
-    MessageFormatter messageFormatter;
+    PerformanceReport message;
+    PerformanceReportFormatter messageFormatter;
 
     @Before
     public void setUp() {
-        message = new Message();
+        message = new PerformanceReport();
         message.setServerName("serwer_1");
         message.setThreadPool("ThreadPool : syb_default_pool");
         message.setUserBusy("10.5");
@@ -19,7 +19,7 @@ public class MesageFormatterTest {
         message.setIoBusy("8.8");
         message.setIdle("8.8");
 
-        messageFormatter = new MessageFormatter(message);
+        messageFormatter = new PerformanceReportFormatter(message);
     }
 
     @Test

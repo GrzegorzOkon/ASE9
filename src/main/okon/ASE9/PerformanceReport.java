@@ -1,14 +1,15 @@
 package okon.ASE9;
 
-public class Message {
+public class PerformanceReport {
     private String serverName;
     private String threadPool;
+    private String cpuBusy;
     private String userBusy;
     private String systemBusy;
     private String ioBusy;
     private String idle;
 
-    public Message() {}
+    public PerformanceReport() {}
 
     public String getServerName() {
         return serverName;
@@ -21,6 +22,10 @@ public class Message {
     public String getThreadPool() {
         return threadPool;
     }
+
+    public String getCpuBusy() { return cpuBusy; }
+
+    public void setCpuBusy(String cpuBusy) { this.cpuBusy = cpuBusy; }
 
     public void setThreadPool(String threadPool) {
         this.threadPool = threadPool;

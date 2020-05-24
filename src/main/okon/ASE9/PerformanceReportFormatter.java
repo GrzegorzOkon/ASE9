@@ -1,9 +1,9 @@
 package okon.ASE9;
 
-public class MessageFormatter {
-    private final Message message;
+public class PerformanceReportFormatter {
+    private final PerformanceReport message;
 
-    public MessageFormatter(Message message) {
+    public PerformanceReportFormatter(PerformanceReport message) {
         this.message = message;
     }
 

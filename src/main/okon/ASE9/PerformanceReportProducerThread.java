@@ -5,7 +5,7 @@ import java.util.List;
 import static okon.ASE9.ASE9App.jobs;
 import static okon.ASE9.ASE9App.messages;
 
-public class MessageProducerThread extends Thread {
+public class PerformanceReportProducerThread extends Thread {
     @Override
     public void run() {
         while (!jobs.isEmpty()) {
@@ -16,9 +16,9 @@ public class MessageProducerThread extends Thread {
                 }
             }
             if (job != null) {
-                List<Message> messageList = MessageManager.getMessages(job);
+                List<PerformanceReport> messageList = PerformanceReportManager.getMessages(job);
                 synchronized (messages) {
-                    for (Message message : messageList)
+                    for (PerformanceReport message : messageList)
                         messages.add(message);
                 }
             }

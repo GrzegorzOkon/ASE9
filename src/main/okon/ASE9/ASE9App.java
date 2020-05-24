@@ -14,7 +14,7 @@ import java.util.Queue;
 
 public class ASE9App {
     static final Queue<Job> jobs = new LinkedList<>();
-    static final List<Message> messages = new ArrayList();
+    static final List<PerformanceReport> messages = new ArrayList();
 
     public static void main(String[] args) {
         initializeQueue();
@@ -56,7 +56,7 @@ public class ASE9App {
     static void startThreadPool(int threadSum) {
         Thread[] threads = new Thread[threadSum];
         for (int i = 0; i < threadSum; i++) {
-            threads[i] = new MessageProducerThread();
+            threads[i] = new PerformanceReportProducerThread();
         }
         for (int i = 0; i < threadSum; i++) {
             threads[i].start();
@@ -80,8 +80,8 @@ public class ASE9App {
         String lines = "-------------------  -------------------------  ------------  ------------  ----------  ----------";
         System.out.println(caption);
         System.out.println(lines);
-        for (Message message : messages) {
-            String formattedMessage = new MessageFormatter(message).format();
+        for (PerformanceReport message : messages) {
+            String formattedMessage = new PerformanceReportFormatter(message).format();
             System.out.println(formattedMessage);
         }
     }
@@ -94,8 +94,8 @@ public class ASE9App {
             out.write(System.getProperty("line.separator"));
             out.write(lines);
             out.write(System.getProperty("line.separator"));
-            for (Message message : messages) {
-                String formattedMessage = new MessageFormatter(message).format();
+            for (PerformanceReport message : messages) {
+                String formattedMessage = new PerformanceReportFormatter(message).format();
                 out.write(formattedMessage);
                 out.write(System.getProperty("line.separator"));
             }

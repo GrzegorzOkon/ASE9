@@ -9,25 +9,25 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LoadServicePooled extends LoadService {
+public class PerformanceServicePooled extends PerformanceService {
     private GatewaySybase db;
 
-    public LoadServicePooled(GatewaySybase db) {
+    public PerformanceServicePooled(GatewaySybase db) {
         this.db = db;
     }
 
     @Override
-    public List<Message> calculateDatabaseLoad(int seconds) {
-        List<Message> result = null;
+    public List<PerformanceReport> reportProcessorPerformance(int seconds) {
+        List<PerformanceReport> result = null;
         try {
             SQLWarning systemRaport = db.findLoadFor(15);
-            String readableSystemRaport = transform(systemRaport);
-            String serverVersion = findServerVersion(readableSystemRaport);
-            String serverName = findServerName(readableSystemRaport);
+            String readableSystemRaport = transformToPlainText(systemRaport);
+            String serverVersion = matchServerVersion(readableSystemRaport);
+            String serverName = matchServerName(readableSystemRaport);
             if (serverVersion.contains("Cluster")) {
                 String kernelUtilizationSection = substringKernelUtilizationSection(readableSystemRaport);
                 result = checkAllPools(kernelUtilizationSection);
-                for(Message message : result) {
+                for(PerformanceReport message : result) {
                     message.setServerName(serverName);
                 }
             }
@@ -37,7 +37,7 @@ public class LoadServicePooled extends LoadService {
         return result;
     }
 
-    private String transform(SQLWarning systemRaport) {
+    private String transformToPlainText(SQLWarning systemRaport) {
         StringBuilder result = new StringBuilder();
         do {
             result.append(systemRaport.getMessage().trim()).append("\n");
@@ -46,14 +46,14 @@ public class LoadServicePooled extends LoadService {
         return result.toString();
     }
 
-    private String findServerVersion(String readableSystemRaport) {
+    private String matchServerVersion(String readableSystemRaport) {
         Pattern pattern = Pattern.compile("Server Version:\\s+(.*)\n");
         Matcher matcher = pattern.matcher(readableSystemRaport);
         matcher.find();
         return matcher.group(1);
     }
 
-    private String findServerName(String readableSystemRaport) {
+    private String matchServerName(String readableSystemRaport) {
         Pattern pattern = Pattern.compile("Server Name:\\s+(\\w+)\n");
         Matcher matcher = pattern.matcher(readableSystemRaport);
         matcher.find();
@@ -65,17 +65,17 @@ public class LoadServicePooled extends LoadService {
                 readableSystemRaport.indexOf("-------------------------  ------------  ------------  ----------  ----------\n" + "Server Summary"));
     }
 
-    private List<Message> checkAllPools(String kernelUtilizationSection) {
+    private List<PerformanceReport> checkAllPools(String kernelUtilizationSection) {
         String[] threadPoolSections = kernelUtilizationSection.split("\n\n");
-        List<Message> kernelPerformanceInformations = new ArrayList();
+        List<PerformanceReport> kernelPerformanceInformations = new ArrayList();
         for (int i = 0; i < threadPoolSections.length; i++) {
             kernelPerformanceInformations.add(checkPoolProcessorsUsage(threadPoolSections[i]));
         }
         return kernelPerformanceInformations;
     }
 
-    private Message checkPoolProcessorsUsage(String threadPoolSection) {
-        Message kernelPerformanceInformation = new Message();
+    private PerformanceReport checkPoolProcessorsUsage(String threadPoolSection) {
+        PerformanceReport kernelPerformanceInformation = new PerformanceReport();
         Pattern pattern = Pattern.compile("ThreadPool :\\s(\\w+)\n");
         Matcher matcher = pattern.matcher(threadPoolSection);
         matcher.find();

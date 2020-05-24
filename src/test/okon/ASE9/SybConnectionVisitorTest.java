@@ -1,4 +1,4 @@
-package okon.ASE9;
+/*package okon.ASE9;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -536,3 +536,4 @@ public class SybConnectionVisitorTest {
         assertEquals("80.0", kernelInfo.getIdle());
     }
 }
+ */

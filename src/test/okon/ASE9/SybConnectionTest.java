@@ -1,4 +1,4 @@
-package okon.ASE9;
+/*package okon.ASE9;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -353,3 +353,5 @@ public class SybConnectionTest {
         assertEquals(correctWarnings, textWarnings);
     }
 }
+
+ */
