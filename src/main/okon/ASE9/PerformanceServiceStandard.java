@@ -17,13 +17,14 @@ public class PerformanceServiceStandard extends PerformanceService {
     }
 
     @Override
-    public List<PerformanceReport> reportProcessorPerformance(int seconds) {
+    public List<PerformanceReport> reportProcessorPerformance(int seconds, String ip) {
         List<PerformanceReport> result = new ArrayList<>();
         try {
             SQLWarning rawSystemReport = db.findLoadFor(15);
             String systemReport = transformToPlainText(rawSystemReport);
             PerformanceReport report = matchStatistics(systemReport);
             report.setServerName(matchServerName(systemReport));
+            report.setServerIP(ip);
             result.add(report);
         } catch (SQLException e) {
             throw new AppException(e);

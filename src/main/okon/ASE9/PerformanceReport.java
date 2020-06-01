@@ -1,6 +1,7 @@
 package okon.ASE9;
 
 public class PerformanceReport {
+    private String serverIP;
     private String serverName;
     private String threadPool;
     private String cpuBusy;
@@ -10,6 +11,10 @@ public class PerformanceReport {
     private String idle;
 
     public PerformanceReport() {}
+
+    public String getServerIP() { return serverIP; }
+
+    public void setServerIP(String serverIP) { this.serverIP = serverIP; }
 
     public String getServerName() {
         return serverName;
