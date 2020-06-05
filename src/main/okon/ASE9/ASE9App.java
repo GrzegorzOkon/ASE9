@@ -78,8 +78,8 @@ public class ASE9App {
     }
 
     static void printToConsole() {
-        String caption = "Server           Thread Pool         CPU Busy    CPU Status";
-        String lines = "---------------  ----------------  ----------    ------------";
+        String caption = "Server           Thread Pool         CPU Busy";
+        String lines = "---------------  ----------------  ----------";
         System.out.println(caption);
         System.out.println(lines);
         for (PerformanceReport message : messages) {
@@ -89,8 +89,8 @@ public class ASE9App {
     }
 
     static void printToFile() {
-        String caption = "Server           Thread Pool         CPU Busy    CPU Status";
-        String lines = "---------------  ----------------  ----------    ------------";
+        String caption = "Server           Thread Pool         CPU Busy";
+        String lines = "---------------  ----------------  ----------";
         try (Writer out = new FileWriter(new java.io.File(ASE9App.getJarFileName() + ".txt"))) {
             out.write(caption);
             out.write(System.getProperty("line.separator"));
