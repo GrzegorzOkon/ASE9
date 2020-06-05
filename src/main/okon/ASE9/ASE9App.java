@@ -1,6 +1,7 @@
 package okon.ASE9;
 
 import okon.ASE9.config.AuthorizationConfigReader;
+import okon.ASE9.config.CommandConfigReader;
 import okon.ASE9.config.ServerConfigReader;
 import okon.ASE9.exception.AppException;
 
@@ -18,19 +19,20 @@ public class ASE9App {
 
     public static void main(String[] args) {
         initializeQueue();
-        startThreadPool(4);
+        startThreadPool(jobs.size());
         print();
     }
 
     static void initializeQueue() {
         List<Server> servers = ServerConfigReader.readParams((new File("./config/servers.xml")));
         List<Authorization> authorizations = AuthorizationConfigReader.readParams((new File("./config/server-auth.xml")));
-        createJobs(servers, authorizations);
+        String time = CommandConfigReader.readParameter(new File("./config/command.xml"));
+        createJobs(servers, authorizations, time);
     }
 
-    static void createJobs(List<Server> servers, List<Authorization> authorizations) {
+    static void createJobs(List<Server> servers, List<Authorization> authorizations, String time) {
         for (Server server : servers) {
-            Job job = new Job(server, matchAuthorizationToServer(server, authorizations));
+            Job job = new Job(server, matchAuthorizationToServer(server, authorizations), time);
             jobs.add(job);
         }
     }

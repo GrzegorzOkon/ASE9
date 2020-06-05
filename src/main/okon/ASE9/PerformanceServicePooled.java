@@ -17,10 +17,10 @@ public class PerformanceServicePooled extends PerformanceService {
     }
 
     @Override
-    public List<PerformanceReport> reportProcessorPerformance(int seconds, String ip) {
+    public List<PerformanceReport> reportProcessorPerformance(String time, String ip) {
         List<PerformanceReport> result = null;
         try {
-            SQLWarning systemRaport = db.findLoadFor(15);
+            SQLWarning systemRaport = db.findLoadFor(time);
             String readableSystemRaport = transformToPlainText(systemRaport);
             String serverVersion = matchServerVersion(readableSystemRaport);
             String serverName = matchServerName(readableSystemRaport);

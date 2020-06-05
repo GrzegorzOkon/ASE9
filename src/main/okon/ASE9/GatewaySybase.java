@@ -8,7 +8,8 @@ import java.io.Closeable;
 import java.sql.*;
 
 public class GatewaySybase implements Closeable {
-    private static final String findLoadStatement = "sp_sysmon '00:00:15', kernel";
+    //private static final String sysmonStatement = "sp_sysmon '00:00:05', kernel";
+    private static final String sysmonStatement = "sp_sysmon ?, kernel";
     private Connection db;
 
     public GatewaySybase(Job job) {
@@ -20,9 +21,10 @@ public class GatewaySybase implements Closeable {
         }
     }
 
-    public SQLWarning findLoadFor(int seconds) throws SQLException {
-        PreparedStatement stmt = db.prepareStatement(findLoadStatement);
-        //stmt.set...
+    public SQLWarning findLoadFor(String time) throws SQLException {
+        PreparedStatement stmt = db.prepareStatement(sysmonStatement);
+        //stmt.setInt(1, seconds);
+        stmt.setString(1, time);
         stmt.executeUpdate();
         SQLWarning result = stmt.getWarnings();
         return result;

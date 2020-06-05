@@ -9,7 +9,7 @@ public class PerformanceReportManager {
         List<PerformanceReport> result = null;
         try (GatewaySybase db = GatewayFactory.make(job)) {
             PerformanceService service = PerformanceServiceFactory.make(job, db);
-            result = service.reportProcessorPerformance(15, job.getServer().getIp());
+            result = service.reportProcessorPerformance(job.getTime(), job.getServer().getIp());
         } catch (Exception e) {
             throw new AppException(e);
         }
