@@ -1,6 +1,7 @@
 package okon.ASE9;
 
 public class PerformanceReport {
+    private String alias;
     private String serverIP;
     private String serverName;
     private String threadPool;
@@ -11,6 +12,10 @@ public class PerformanceReport {
     private String idle;
 
     public PerformanceReport() {}
+
+    public String getAlias() { return alias; }
+
+    public void setAlias(String alias) { this.alias = alias; }
 
     public String getServerIP() { return serverIP; }
 

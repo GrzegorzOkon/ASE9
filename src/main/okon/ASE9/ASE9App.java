@@ -78,27 +78,27 @@ public class ASE9App {
     }
 
     static void printToConsole() {
-        String caption = "Server           Thread Pool         CPU Busy";
-        String lines = "---------------  ----------------  ----------";
-        System.out.println(caption);
-        System.out.println(lines);
-        for (PerformanceReport message : messages) {
-            String formattedMessage = new PerformanceReportFormatter(message).format();
-            System.out.println(formattedMessage);
+        PerformanceReportFormatter formatter = new PerformanceReportFormatter(messages);
+        System.out.println(formatter.format(new String[]{"Server", "Thread Pool", "CPU Busy"}));
+        System.out.println(formatter.format(new String[]{"------", "----------", "--------"}));
+        for (PerformanceReport report : messages) {
+            String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
+                    report.getThreadPool(), formatter.getCPUBusy(report.getIdle()) + " %"});
+            System.out.println(formattedRow);
         }
     }
 
     static void printToFile() {
-        String caption = "Server           Thread Pool         CPU Busy";
-        String lines = "---------------  ----------------  ----------";
         try (Writer out = new FileWriter(new java.io.File(ASE9App.getJarFileName() + ".txt"))) {
-            out.write(caption);
+            PerformanceReportFormatter formatter = new PerformanceReportFormatter(messages);
+            out.write(formatter.format(new String[]{"Server", "Thread Pool", "CPU Busy"}));
             out.write(System.getProperty("line.separator"));
-            out.write(lines);
+            out.write(formatter.format(new String[]{"------", "----------", "--------"}));
             out.write(System.getProperty("line.separator"));
-            for (PerformanceReport message : messages) {
-                String formattedMessage = new PerformanceReportFormatter(message).format();
-                out.write(formattedMessage);
+            for (PerformanceReport report : messages) {
+                String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
+                        report.getThreadPool(), formatter.getCPUBusy(report.getIdle()) + " %"});
+                out.write(formattedRow);
                 out.write(System.getProperty("line.separator"));
             }
         } catch (Exception e) {

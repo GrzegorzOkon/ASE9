@@ -17,7 +17,7 @@ public class PerformanceServicePooled extends PerformanceService {
     }
 
     @Override
-    public List<PerformanceReport> reportProcessorPerformance(String time, String ip) {
+    public List<PerformanceReport> reportProcessorPerformance(String time, Server server) {
         List<PerformanceReport> result = null;
         try {
             SQLWarning systemRaport = db.findLoadFor(time);
@@ -29,7 +29,8 @@ public class PerformanceServicePooled extends PerformanceService {
                 result = checkAllPools(kernelUtilizationSection);
                 for(PerformanceReport message : result) {
                     message.setServerName(serverName);
-                    message.setServerIP(ip);
+                    message.setAlias(server.getAlias());
+                    message.setServerIP(server.getIp());
                 }
             }
         } catch (SQLException e) {
