@@ -1,14 +1,13 @@
 package okon.ASE9;
 
 import java.text.NumberFormat;
-import java.util.List;
+
+import static okon.ASE9.ASE9App.messages;
 
 public class ReportFormatter {
-    private List<Report> source = null;
     private final StringBuilder format = new StringBuilder();
 
-    public ReportFormatter(List<Report> source) {
-        this.source = source;
+    public ReportFormatter() {
         initialize();
     }
 
@@ -19,7 +18,7 @@ public class ReportFormatter {
 
     public int[] checkColumnSizes() {
         int[] result = new int[]{6, 11, 8};
-        for (Report report : source) {
+        for (Report report : messages) {
             if (Integer.valueOf(report.getAlias().length()) + Integer.valueOf(report.getServerIP().length()) + 3 > result[0]) {
                 result[0] = Integer.valueOf(report.getAlias().length()) +  Integer.valueOf(report.getServerIP().length()) + 3;
             }

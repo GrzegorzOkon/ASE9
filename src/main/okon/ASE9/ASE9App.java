@@ -78,9 +78,9 @@ public class ASE9App {
     }
 
     static void printToConsole() {
-        ReportFormatter formatter = new ReportFormatter(messages);
+        ReportFormatter formatter = new ReportFormatter();
         System.out.println(formatter.format(new String[]{"Server", "Thread Pool", "CPU Busy"}));
-        System.out.println(formatter.format(new String[]{"------", "----------", "--------"}));
+        System.out.println(formatter.format(new String[]{"------", "-----------", "--------"}));
         for (Report report : messages) {
             if (report instanceof PerformanceReport) {
                 String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
@@ -96,10 +96,10 @@ public class ASE9App {
 
     static void printToFile() {
         try (Writer out = new FileWriter(new java.io.File(ASE9App.getJarFileName() + ".txt"))) {
-            ReportFormatter formatter = new ReportFormatter(messages);
+            ReportFormatter formatter = new ReportFormatter();
             out.write(formatter.format(new String[]{"Server", "Thread Pool", "CPU Busy"}));
             out.write(System.getProperty("line.separator"));
-            out.write(formatter.format(new String[]{"------", "----------", "--------"}));
+            out.write(formatter.format(new String[]{"------", "-----------", "--------"}));
             out.write(System.getProperty("line.separator"));
             for (Report report : messages) {
                 if (report instanceof PerformanceReport) {
