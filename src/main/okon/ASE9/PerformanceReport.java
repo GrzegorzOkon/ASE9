@@ -1,15 +1,15 @@
 package okon.ASE9;
 
 public class PerformanceReport {
-    private String alias;
-    private String serverIP;
-    private String serverName;
-    private String threadPool;
-    private String cpuBusy;
-    private String userBusy;
-    private String systemBusy;
-    private String ioBusy;
-    private String idle;
+    private String alias = "";
+    private String serverIP = "";
+    private String serverName = "";
+    private String threadPool = "";
+    private String cpuBusy = "";
+    private String userBusy = "";
+    private String systemBusy = "";
+    private String ioBusy = "";
+    private String idle = "";
 
     public PerformanceReport() {}
 

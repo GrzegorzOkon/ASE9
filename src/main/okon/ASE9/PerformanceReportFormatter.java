@@ -21,13 +21,13 @@ public class PerformanceReportFormatter {
         int[] result = new int[]{6, 11, 8};
         for (PerformanceReport report : source) {
             if (report.getAlias().length() + report.getServerIP().length() + 3 > result[0]) {
-                result[0] = report.getAlias().length() + report.getServerIP().length() + 3;
+                result[0] = Integer.valueOf(report.getAlias().length()) +  Integer.valueOf(report.getServerIP().length()) + 3;
             }
             if (report.getThreadPool().length() > result[1]) {
-                result[1] = report.getThreadPool().length();
+                result[1] =  Integer.valueOf(report.getThreadPool().length());
             }
             if (getCPUBusy(report.getIdle()).toString().length() + 2 > result[2]) {
-                result[2] = getCPUBusy(report.getIdle()).toString().length() + 2;
+                result[2] =  Integer.valueOf(getCPUBusy(report.getIdle()).toString().length()) + 2;
             }
         }
         return result;
