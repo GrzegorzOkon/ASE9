@@ -17,12 +17,12 @@ public class PerformanceServiceStandard extends PerformanceService {
     }
 
     @Override
-    public List<PerformanceReport> reportProcessorPerformance(String time, Server server) {
-        List<PerformanceReport> result = new ArrayList<>();
+    public List<Report> reportProcessorPerformance(String time, Server server) {
+        List<Report> result = new ArrayList<>();
         try {
             SQLWarning rawSystemReport = db.findLoadFor(time);
             String systemReport = transformToPlainText(rawSystemReport);
-            PerformanceReport report = matchStatistics(systemReport);
+            Report report = matchStatistics(systemReport);
             report.setServerName(matchServerName(systemReport));
             report.setAlias(server.getAlias());
             report.setServerIP(server.getIp());
@@ -42,7 +42,7 @@ public class PerformanceServiceStandard extends PerformanceService {
         return result.toString();
     }
 
-    public PerformanceReport matchStatistics(String systemReport) {
+    public Report matchStatistics(String systemReport) {
         PerformanceReport result = new PerformanceReport();
         Pattern pattern = Pattern.compile("Average\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%");
         Matcher matcher = pattern.matcher(systemReport);

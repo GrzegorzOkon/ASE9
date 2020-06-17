@@ -17,8 +17,8 @@ public class PerformanceServicePooled extends PerformanceService {
     }
 
     @Override
-    public List<PerformanceReport> reportProcessorPerformance(String time, Server server) {
-        List<PerformanceReport> result = null;
+    public List<Report> reportProcessorPerformance(String time, Server server) {
+        List<Report> result = null;
         try {
             SQLWarning systemRaport = db.findLoadFor(time);
             String readableSystemRaport = transformToPlainText(systemRaport);
@@ -27,7 +27,7 @@ public class PerformanceServicePooled extends PerformanceService {
             if (serverVersion.contains("Cluster")) {
                 String kernelUtilizationSection = substringKernelUtilizationSection(readableSystemRaport);
                 result = checkAllPools(kernelUtilizationSection);
-                for(PerformanceReport message : result) {
+                for(Report message : result) {
                     message.setServerName(serverName);
                     message.setAlias(server.getAlias());
                     message.setServerIP(server.getIp());
@@ -67,9 +67,9 @@ public class PerformanceServicePooled extends PerformanceService {
                 readableSystemRaport.indexOf("-------------------------  ------------  ------------  ----------  ----------\n" + "Server Summary"));
     }
 
-    private List<PerformanceReport> checkAllPools(String kernelUtilizationSection) {
+    private List<Report> checkAllPools(String kernelUtilizationSection) {
         String[] threadPoolSections = kernelUtilizationSection.split("\n\n");
-        List<PerformanceReport> kernelPerformanceInformations = new ArrayList();
+        List<Report> kernelPerformanceInformations = new ArrayList();
         for (int i = 0; i < threadPoolSections.length; i++) {
             kernelPerformanceInformations.add(checkPoolProcessorsUsage(threadPoolSections[i]));
         }

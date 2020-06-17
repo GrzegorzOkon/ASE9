@@ -2,13 +2,13 @@ package okon.ASE9;
 
 import com.sybase.jdbc4.jdbc.SybDataSource;
 import okon.ASE9.exception.AppException;
+import okon.ASE9.exception.ConnectionException;
 
 import javax.sql.DataSource;
 import java.io.Closeable;
 import java.sql.*;
 
 public class GatewaySybase implements Closeable {
-    //private static final String sysmonStatement = "sp_sysmon '00:00:05', kernel";
     private static final String sysmonStatement = "sp_sysmon ?, kernel";
     private Connection db;
 
@@ -17,13 +17,12 @@ public class GatewaySybase implements Closeable {
             db = createDataSource(job.getServer().getIp(), job.getServer().getPort(), job.getAuthorization().getUsername(),
                     job.getAuthorization().getPassword()).getConnection();
         } catch (SQLException e) {
-            throw new AppException(e);
+            throw new ConnectionException(e);
         }
     }
 
     public SQLWarning findLoadFor(String time) throws SQLException {
         PreparedStatement stmt = db.prepareStatement(sysmonStatement);
-        //stmt.setInt(1, seconds);
         stmt.setString(1, time);
         stmt.executeUpdate();
         SQLWarning result = stmt.getWarnings();

@@ -9,8 +9,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class PerformanceReportFormatterTest {
-    List<PerformanceReport> reports;
-    PerformanceReportFormatter reportFormatter;
+    List<Report> reports;
+    ReportFormatter reportFormatter;
 
     @Before
     public void setUp() {
@@ -21,7 +21,7 @@ public class PerformanceReportFormatterTest {
         report.setThreadPool("thread pool 1");
         report.setIdle("50.1");
         reports.add(report);
-        reportFormatter = new PerformanceReportFormatter(reports);
+        reportFormatter = new ReportFormatter(reports);
     }
 
     @Test

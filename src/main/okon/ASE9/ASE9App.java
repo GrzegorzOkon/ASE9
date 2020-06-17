@@ -15,7 +15,7 @@ import java.util.Queue;
 
 public class ASE9App {
     static final Queue<Job> jobs = new LinkedList<>();
-    static final List<PerformanceReport> messages = new ArrayList();
+    static final List<Report> messages = new ArrayList();
 
     public static void main(String[] args) {
         initializeQueue();
@@ -58,7 +58,7 @@ public class ASE9App {
     static void startThreadPool(int threadSum) {
         Thread[] threads = new Thread[threadSum];
         for (int i = 0; i < threadSum; i++) {
-            threads[i] = new PerformanceReportProducerThread();
+            threads[i] = new ReportProducerThread();
         }
         for (int i = 0; i < threadSum; i++) {
             threads[i].start();
@@ -78,28 +78,41 @@ public class ASE9App {
     }
 
     static void printToConsole() {
-        PerformanceReportFormatter formatter = new PerformanceReportFormatter(messages);
+        ReportFormatter formatter = new ReportFormatter(messages);
         System.out.println(formatter.format(new String[]{"Server", "Thread Pool", "CPU Busy"}));
         System.out.println(formatter.format(new String[]{"------", "----------", "--------"}));
-        for (PerformanceReport report : messages) {
-            String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
-                    report.getThreadPool(), formatter.getCPUBusy(report.getIdle()) + " %"});
-            System.out.println(formattedRow);
+        for (Report report : messages) {
+            if (report instanceof PerformanceReport) {
+                String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
+                        report.getThreadPool(), formatter.getCPUBusy(report.getIdle()) + " %"});
+                System.out.println(formattedRow);
+            } else if (report instanceof ExceptionReport) {
+                String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
+                        "connection error", ""});
+                System.out.println(formattedRow);
+            }
         }
     }
 
     static void printToFile() {
         try (Writer out = new FileWriter(new java.io.File(ASE9App.getJarFileName() + ".txt"))) {
-            PerformanceReportFormatter formatter = new PerformanceReportFormatter(messages);
+            ReportFormatter formatter = new ReportFormatter(messages);
             out.write(formatter.format(new String[]{"Server", "Thread Pool", "CPU Busy"}));
             out.write(System.getProperty("line.separator"));
             out.write(formatter.format(new String[]{"------", "----------", "--------"}));
             out.write(System.getProperty("line.separator"));
-            for (PerformanceReport report : messages) {
-                String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
-                        report.getThreadPool(), formatter.getCPUBusy(report.getIdle()) + " %"});
-                out.write(formattedRow);
-                out.write(System.getProperty("line.separator"));
+            for (Report report : messages) {
+                if (report instanceof PerformanceReport) {
+                    String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
+                            report.getThreadPool(), formatter.getCPUBusy(report.getIdle()) + " %"});
+                    out.write(formattedRow);
+                    out.write(System.getProperty("line.separator"));
+                } else if (report instanceof ExceptionReport) {
+                    String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
+                            "connection error", ""});
+                    out.write(formattedRow);
+                    out.write(System.getProperty("line.separator"));
+                }
             }
         } catch (Exception e) {
             throw new AppException(e);

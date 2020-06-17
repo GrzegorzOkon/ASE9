@@ -111,7 +111,7 @@ public class PerformanceServiceStandardTest {
     @Test
     public void shouldSayThatServerStatisticsAreEqual() {
         PerformanceServiceStandard service = new PerformanceServiceStandard(null);
-        PerformanceReport statistics = null;
+        Report statistics = null;
         String correctCPUBusy = "0.0";
         String correctIOBusy = "5.0";
         String correctIdle = "95.0";

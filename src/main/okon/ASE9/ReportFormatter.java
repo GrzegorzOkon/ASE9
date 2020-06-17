@@ -3,11 +3,11 @@ package okon.ASE9;
 import java.text.NumberFormat;
 import java.util.List;
 
-public class PerformanceReportFormatter {
-    private List<PerformanceReport> source = null;
+public class ReportFormatter {
+    private List<Report> source = null;
     private final StringBuilder format = new StringBuilder();
 
-    public PerformanceReportFormatter(List<PerformanceReport> source) {
+    public ReportFormatter(List<Report> source) {
         this.source = source;
         initialize();
     }
@@ -19,15 +19,12 @@ public class PerformanceReportFormatter {
 
     public int[] checkColumnSizes() {
         int[] result = new int[]{6, 11, 8};
-        for (PerformanceReport report : source) {
-            if (report.getAlias().length() + report.getServerIP().length() + 3 > result[0]) {
+        for (Report report : source) {
+            if (Integer.valueOf(report.getAlias().length()) + Integer.valueOf(report.getServerIP().length()) + 3 > result[0]) {
                 result[0] = Integer.valueOf(report.getAlias().length()) +  Integer.valueOf(report.getServerIP().length()) + 3;
             }
-            if (report.getThreadPool().length() > result[1]) {
+            if (Integer.valueOf(report.getThreadPool().length()) > result[1]) {
                 result[1] =  Integer.valueOf(report.getThreadPool().length());
-            }
-            if (getCPUBusy(report.getIdle()).toString().length() + 2 > result[2]) {
-                result[2] =  Integer.valueOf(getCPUBusy(report.getIdle()).toString().length()) + 2;
             }
         }
         return result;
