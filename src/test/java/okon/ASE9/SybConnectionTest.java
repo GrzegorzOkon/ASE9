@@ -1,43 +1,32 @@
 /*package okon.ASE9;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 import javax.sql.DataSource;
-
 import java.sql.Connection;
 import java.sql.SQLWarning;
 import java.sql.Statement;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
-
 @RunWith(MockitoJUnitRunner.class)
 public class SybConnectionTest {
     @Mock
     private DataSource dataSourceMock;
-
     @Mock
     private Connection connectionMock;
-
     @Mock
     private Statement statementMock;
-
     @Mock
     private SQLWarning sqlWarningMock;
-
     @Before
     public void setUp() throws Exception {
         assertNotNull(dataSourceMock);
         when(dataSourceMock.getConnection()).thenReturn(connectionMock);
-
         setUpWarnings();
     }
-
     private void setUpWarnings() {
         sqlWarningMock = new SQLWarning(new SQLWarning("	DBCC execution completed. If DBCC printed error messages, contact a user with System Administrator (SA) role.	"));
         sqlWarningMock.setNextWarning(new SQLWarning("		"));
@@ -324,7 +313,6 @@ public class SybConnectionTest {
         sqlWarningMock.setNextWarning(new SQLWarning("	  -------------------------  ------------  ------------  ----------  ---------- 	"));
         sqlWarningMock.setNextWarning(new SQLWarning("	  Total Requests                      0.0           0.0           0       n/a  	"));
     }
-
     @Test
     public void shouldSayThatWarningsAreEquals() {
         SybConnection sybConnection = null;
@@ -335,23 +323,18 @@ public class SybConnectionTest {
                 + "	=============================================================================== 	".trim() + "\n"
                 + "	 	".trim() + "\n";
         String textWarnings = null;
-
         try {
             sybConnection = new SybConnection(dataSourceMock);
-
             SQLWarning warnings = new SQLWarning("	Counters Last Cleared: Feb 15, 2019 07:15:33                                    	");
             warnings.setNextWarning(new SQLWarning("	 	"));
             warnings.setNextWarning(new SQLWarning("	=============================================================================== 	"));
             warnings.setNextWarning(new SQLWarning(" Server Name:           server_name_1                                                   	"));
             warnings.setNextWarning(new SQLWarning("	=============================================================================== 	"));
             warnings.setNextWarning(new SQLWarning("	 	"));
-
             textWarnings = sybConnection.transform(warnings);
         } catch (AppException ex) {
         }
-
         assertEquals(correctWarnings, textWarnings);
     }
 }
-
  */

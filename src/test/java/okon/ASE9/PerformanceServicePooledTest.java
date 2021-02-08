@@ -1,4 +1,4 @@
-/*package okon.ASE9;
+package okon.ASE9;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -6,37 +6,19 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.SQLWarning;
-import java.sql.Statement;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SybConnectionVisitorTest {
-    @Mock
-    private DataSource dataSourceMock;
-
-    @Mock
-    private Connection connectionMock;
-
-    @Mock
-    private Statement statementMock;
-
+public class PerformanceServicePooledTest {
     @Mock
     private SQLWarning sqlWarningMock;
 
     @Before
     public void setUp() throws Exception {
-        assertNotNull(dataSourceMock);
-        when(dataSourceMock.getConnection()).thenReturn(connectionMock);
-
         setUpWarnings();
     }
-
     private void setUpWarnings() {
         sqlWarningMock = new SQLWarning(new SQLWarning("	DBCC execution completed. If DBCC printed error messages, contact a user with System Administrator (SA) role.	"));
         sqlWarningMock.setNextWarning(new SQLWarning("		"));
@@ -325,215 +307,64 @@ public class SybConnectionVisitorTest {
     }
 
     @Test
-    public void shouldSayThatServerVersionIsEquals() {
-        SybConnectionVisitor sybConnectionVisitor = new SybConnectionVisitor();
-        SybConnection sybConnection = null;
-
-        String correctServerVersion = "Adaptive Server Enterprise/15.7/EBF 27856 Cluster Editio";
-        String serverVersion = null;
-
-        try {
-            sybConnection = new SybConnection(dataSourceMock);
-            StringBuilder warnings = new StringBuilder();
-
-            do {
-                warnings.append(sqlWarningMock.getMessage().trim()).append("\n");
-                sqlWarningMock = sqlWarningMock.getNextWarning();
-            } while (sqlWarningMock != null);
-
-            sybConnection.response = warnings.toString();
-
-            serverVersion = sybConnectionVisitor.findServerVersion(sybConnection);
-        } catch (AppException ex) {
-        }
-
-        assertEquals(correctServerVersion, serverVersion);
-    }
-
-    @Test
-    public void shouldSayThatServerNameIsEquals() {
-        SybConnectionVisitor sybConnectionVisitor = new SybConnectionVisitor();
-        SybConnection sybConnection = null;
-
-        String correctServerName = "server_name_1";
-        String serverName = null;
-
-        try {
-            sybConnection = new SybConnection(dataSourceMock);
-            StringBuilder warnings = new StringBuilder();
-
-            do {
-                warnings.append(sqlWarningMock.getMessage().trim()).append("\n");
-                sqlWarningMock = sqlWarningMock.getNextWarning();
-            } while (sqlWarningMock != null);
-
-            sybConnection.response = warnings.toString();
-
-            serverName = sybConnectionVisitor.findServerName(sybConnection);
-        } catch (AppException ex) {
-        }
-
-        assertEquals(correctServerName, serverName);
-    }
-
-    @Test
-    public void shouldSayThatKernelUtilizationSectionIsEquals() {
-        SybConnectionVisitor sybConnectionVisitor = new SybConnectionVisitor();
-        SybConnection sybConnection = null;
-
-        String correctKernelUtilizationSection = "Engine Utilization (Tick %)   User Busy   System Busy    I/O Busy        Idle\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
+    public void shouldSayThatThreadUtilizationSectionIsEqual() {    
+        PerformanceServicePooled service = new PerformanceServicePooled(null);
+        String correctThreadUtilizationSection = "Thread Utilization (OS %)     User Busy   System Busy        Idle\n" +
+                "-------------------------  ------------  ------------  ----------\n" +
                 "ThreadPool : aes_pool\n" +
-                "Engine 11                       10.5 %         0.0 %       8.8 %      80.7 %\n" +
-                "Engine 12                       17.5 %         0.0 %       8.8 %      73.7 %\n" +
-                "Engine 13                       12.3 %         0.0 %       7.0 %      80.7 %\n" +
-                "Engine 14                        7.0 %         0.0 %       8.8 %      84.2 %\n" +
-                "Engine 15                       10.5 %         0.0 %       8.8 %      80.7 %\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "Pool Summary        Total        57.9 %         0.0 %      42.1 %     400.0 %\n" +
-                "Average        11.6 %         0.0 %       8.4 %      80.0 %\n" +
+                "Thread 17   (Engine 11)         10.4 %         0.2 %      89.4 %\n" +
+                "Thread 18   (Engine 12)         17.6 %         0.6 %      81.8 %\n" +
+                "Thread 19   (Engine 13)         16.2 %         0.6 %      83.2 %\n" +
+                "Thread 20   (Engine 14)         11.2 %         0.4 %      88.4 %\n" +
+                "Thread 21   (Engine 15)         13.4 %         0.4 %      86.2 %\n" +
+                "-------------------------  ------------  ------------  ----------\n" +
+                "Pool Summary      Total          68.8 %         2.2 %     429.0 %\n" +
+                "Average          13.8 %         0.4 %      85.8 %\n" +
                 "\n" +
                 "ThreadPool : intrastat_pool\n" +
-                "Engine 9                         1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "Engine 10                        1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "Pool Summary        Total         3.5 %         0.0 %      17.5 %     178.9 %\n" +
-                "Average         1.8 %         0.0 %       8.8 %      89.5 %\n" +
+                "Thread 15   (Engine 9)           1.2 %         0.0 %      98.8 %\n" +
+                "Thread 16   (Engine 10)          0.6 %         0.0 %      99.4 %\n" +
+                "-------------------------  ------------  ------------  ----------\n" +
+                "Pool Summary      Total           1.8 %         0.0 %     198.2 %\n" +
+                "Average           0.9 %         0.0 %      99.1 %\n" +
+                "\n" +
+                "ThreadPool : syb_blocking_pool : no activity during sample\n" +
                 "\n" +
                 "ThreadPool : syb_default_pool\n" +
-                "Engine 0                         3.5 %         0.0 %       8.8 %      87.7 %\n" +
-                "Engine 1                         3.5 %         0.0 %       8.8 %      87.7 %\n" +
-                "Engine 2                        14.0 %         0.0 %       8.8 %      77.2 %\n" +
-                "Engine 3                        12.3 %         0.0 %       8.8 %      78.9 %\n" +
-                "Engine 4                         8.8 %         0.0 %       8.8 %      82.5 %\n" +
-                "Engine 5                         3.5 %         0.0 %       8.8 %      87.7 %\n" +
-                "Engine 6                         1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "Engine 7                         1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "Engine 8                         0.0 %         0.0 %       8.8 %      91.2 %\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "Pool Summary        Total        49.1 %         0.0 %      78.9 %     771.9 %\n" +
-                "Average         5.5 %         0.0 %       8.8 %      85.8 %\n" +
+                "Thread 6    (Engine 0)           3.6 %         0.0 %      96.4 %\n" +
+                "Thread 7    (Engine 1)          13.2 %         0.8 %      86.0 %\n" +
+                "Thread 8    (Engine 2)           5.0 %         0.2 %      94.8 %\n" +
+                "Thread 9    (Engine 3)          14.6 %         0.0 %      85.4 %\n" +
+                "Thread 10   (Engine 4)           7.8 %         0.0 %      92.2 %\n" +
+                "Thread 11   (Engine 5)           5.4 %         0.2 %      94.4 %\n" +
+                "Thread 12   (Engine 6)           2.8 %         0.0 %      97.2 %\n" +
+                "Thread 13   (Engine 7)           5.4 %         0.2 %      94.4 %\n" +
+                "Thread 14   (Engine 8)           3.4 %         0.2 %      96.4 %\n" +
+                "-------------------------  ------------  ------------  ----------\n" +
+                "Pool Summary      Total          61.2 %         1.6 %     837.2 %\n" +
+                "Average           6.8 %         0.2 %      93.0 %\n" +
+                "\n" +
+                "ThreadPool : syb_system_pool\n" +
+                "Thread 22   (NetController)      0.0 %         0.4 %      99.6 %\n" +
+                "Thread 23   (NetController)      0.2 %         0.2 %      99.6 %\n" +
+                "Thread 24   (NetController)      0.6 %         0.6 %      98.8 %\n" +
+                "Thread 25   (NetController)      0.0 %         0.2 %      99.8 %\n" +
+                "Thread 26   (NetController)      0.2 %         0.4 %      99.4 %\n" +
+                "Thread 27   (NetController)      0.8 %         1.0 %      98.2 %\n" +
+                "Thread 28   (DiskController)     0.2 %         0.0 %      99.8 %\n" +
+                "-------------------------  ------------  ------------  ----------\n" +
+                "Pool Summary      Total           2.0 %         2.8 %     995.2 %\n" +
+                "Average           0.2 %         0.3 %      99.5 %\n" +
                 "\n";
-        String kernelUtilizationSection = null;
-
+        String threadUtilizationSection = null;
         try {
-            sybConnection = new SybConnection(dataSourceMock);
             StringBuilder warnings = new StringBuilder();
-
             do {
                 warnings.append(sqlWarningMock.getMessage().trim()).append("\n");
                 sqlWarningMock = sqlWarningMock.getNextWarning();
             } while (sqlWarningMock != null);
-
-            sybConnection.response = warnings.toString();
-
-            kernelUtilizationSection = sybConnectionVisitor.substringKernelUtilizationSection(sybConnection);
-        } catch (AppException ex) {
-        }
-
-        assertEquals(correctKernelUtilizationSection, kernelUtilizationSection);
-    }
-
-    @Test
-    public void shouldSayThatThreadPoolSectionsAreEqual() {
-        SybConnectionVisitor sybConnectionVisitor = new SybConnectionVisitor();
-
-        String kernelUtilizationSection = "Engine Utilization (Tick %)   User Busy   System Busy    I/O Busy        Idle\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "ThreadPool : aes_pool\n" +
-                "Engine 11                       10.5 %         0.0 %       8.8 %      80.7 %\n" +
-                "Engine 12                       17.5 %         0.0 %       8.8 %      73.7 %\n" +
-                "Engine 13                       12.3 %         0.0 %       7.0 %      80.7 %\n" +
-                "Engine 14                        7.0 %         0.0 %       8.8 %      84.2 %\n" +
-                "Engine 15                       10.5 %         0.0 %       8.8 %      80.7 %\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "Pool Summary        Total        57.9 %         0.0 %      42.1 %     400.0 %\n" +
-                "Average        11.6 %         0.0 %       8.4 %      80.0 %\n" +
-                "\n" +
-                "ThreadPool : intrastat_pool\n" +
-                "Engine 9                         1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "Engine 10                        1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "Pool Summary        Total         3.5 %         0.0 %      17.5 %     178.9 %\n" +
-                "Average         1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "\n" +
-                "ThreadPool : syb_default_pool\n" +
-                "Engine 0                         3.5 %         0.0 %       8.8 %      87.7 %\n" +
-                "Engine 1                         3.5 %         0.0 %       8.8 %      87.7 %\n" +
-                "Engine 2                        14.0 %         0.0 %       8.8 %      77.2 %\n" +
-                "Engine 3                        12.3 %         0.0 %       8.8 %      78.9 %\n" +
-                "Engine 4                         8.8 %         0.0 %       8.8 %      82.5 %\n" +
-                "Engine 5                         3.5 %         0.0 %       8.8 %      87.7 %\n" +
-                "Engine 6                         1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "Engine 7                         1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "Engine 8                         0.0 %         0.0 %       8.8 %      91.2 %\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "Pool Summary        Total        49.1 %         0.0 %      78.9 %     771.9 %\n" +
-                "Average         5.5 %         0.0 %       8.8 %      85.8 %\n" +
-                "\n";
-        String correctAesPool = "Engine Utilization (Tick %)   User Busy   System Busy    I/O Busy        Idle\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "ThreadPool : aes_pool\n" +
-                "Engine 11                       10.5 %         0.0 %       8.8 %      80.7 %\n" +
-                "Engine 12                       17.5 %         0.0 %       8.8 %      73.7 %\n" +
-                "Engine 13                       12.3 %         0.0 %       7.0 %      80.7 %\n" +
-                "Engine 14                        7.0 %         0.0 %       8.8 %      84.2 %\n" +
-                "Engine 15                       10.5 %         0.0 %       8.8 %      80.7 %\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "Pool Summary        Total        57.9 %         0.0 %      42.1 %     400.0 %\n" +
-                "Average        11.6 %         0.0 %       8.4 %      80.0 %";
-        String correctIntrastatPool = "ThreadPool : intrastat_pool\n" +
-                "Engine 9                         1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "Engine 10                        1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "Pool Summary        Total         3.5 %         0.0 %      17.5 %     178.9 %\n" +
-                "Average         1.8 %         0.0 %       8.8 %      89.5 %";
-        String correctSybDefaultPool = "ThreadPool : syb_default_pool\n" +
-                "Engine 0                         3.5 %         0.0 %       8.8 %      87.7 %\n" +
-                "Engine 1                         3.5 %         0.0 %       8.8 %      87.7 %\n" +
-                "Engine 2                        14.0 %         0.0 %       8.8 %      77.2 %\n" +
-                "Engine 3                        12.3 %         0.0 %       8.8 %      78.9 %\n" +
-                "Engine 4                         8.8 %         0.0 %       8.8 %      82.5 %\n" +
-                "Engine 5                         3.5 %         0.0 %       8.8 %      87.7 %\n" +
-                "Engine 6                         1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "Engine 7                         1.8 %         0.0 %       8.8 %      89.5 %\n" +
-                "Engine 8                         0.0 %         0.0 %       8.8 %      91.2 %\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "Pool Summary        Total        49.1 %         0.0 %      78.9 %     771.9 %\n" +
-                "Average         5.5 %         0.0 %       8.8 %      85.8 %";
-        String[] threadPoolSection = null;
-
-        threadPoolSection = sybConnectionVisitor.splitForThreadPoolSections(kernelUtilizationSection);
-
-        assertEquals(correctAesPool, threadPoolSection[0]);
-        assertEquals(correctIntrastatPool, threadPoolSection[1]);
-        assertEquals(correctSybDefaultPool, threadPoolSection[2]);
-    }
-
-    @Test
-    public void shouldSayThatKernelInformationsAreEqual() {
-        SybConnectionVisitor sybConnectionVisitor = new SybConnectionVisitor();
-
-        String aesThreadPool = "Engine Utilization (Tick %)   User Busy   System Busy    I/O Busy        Idle\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "ThreadPool : aes_pool\n" +
-                "Engine 11                       10.5 %         0.0 %       8.8 %      80.7 %\n" +
-                "Engine 12                       17.5 %         0.0 %       8.8 %      73.7 %\n" +
-                "Engine 13                       12.3 %         0.0 %       7.0 %      80.7 %\n" +
-                "Engine 14                        7.0 %         0.0 %       8.8 %      84.2 %\n" +
-                "Engine 15                       10.5 %         0.0 %       8.8 %      80.7 %\n" +
-                "-------------------------  ------------  ------------  ----------  ----------\n" +
-                "Pool Summary        Total        57.9 %         0.0 %      42.1 %     400.0 %\n" +
-                "Average        11.6 %         0.0 %       8.4 %      80.0 %";
-        Message kernelInfo = null;
-
-        kernelInfo = sybConnectionVisitor.checkPoolProcessorsUsage(aesThreadPool);
-
-        assertEquals("aes_pool", kernelInfo.getThreadPool());
-        assertEquals("11.6", kernelInfo.getUserBusy());
-        assertEquals("0.0", kernelInfo.getSystemBusy());
-        assertEquals("8.4", kernelInfo.getIoBusy());
-        assertEquals("80.0", kernelInfo.getIdle());
+            threadUtilizationSection = service.substringThreadUtilizationSection(warnings.toString());
+        } catch (Exception ex) {}
+        assertEquals(correctThreadUtilizationSection, threadUtilizationSection);
     }
 }
- */
