@@ -91,7 +91,7 @@ public class ASE9App {
         for (Report report : messages) {
             if (report instanceof PerformanceReport) {
                 String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
-                        report.getThreadPool(), formatter.getCPUBusy(report.getIdle()) + " %"});
+                        report.getThreadPool(), formatter.getCPUBusy(report.getIdleTick()) + " %"});
                 System.out.println(formattedRow);
             } else if (report instanceof ExceptionReport) {
                 String formattedRow = formatter.format(new String[]{CONNECTION_EXCEPTION_COMMUNICATE + " " + report.getAlias() +
@@ -111,7 +111,7 @@ public class ASE9App {
             for (Report report : messages) {
                 if (report instanceof PerformanceReport) {
                     String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
-                            report.getThreadPool(), formatter.getCPUBusy(report.getIdle()) + " %"});
+                            report.getThreadPool(), formatter.getCPUBusy(report.getIdleTick()) + " %"});
                     out.write(formattedRow);
                     out.write(System.getProperty("line.separator"));
                 } else if (report instanceof ExceptionReport) {
@@ -133,7 +133,7 @@ public class ASE9App {
         for (Report report : messages) {
             if (report instanceof PerformanceReport) {
                 String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
-                        formatter.getCPUBusy(report.getIdle()) + " %"});
+                        formatter.getCPUBusy(report.getIdleTick()) + " %"});
                 System.out.println(formattedRow);
             } else if (report instanceof ExceptionReport) {
                 String formattedRow = formatter.format(new String[]{CONNECTION_EXCEPTION_COMMUNICATE + " " + report.getAlias() +
@@ -153,7 +153,7 @@ public class ASE9App {
             for (Report report : messages) {
                 if (report instanceof PerformanceReport) {
                     String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
-                            formatter.getCPUBusy(report.getIdle()) + " %"});
+                            formatter.getCPUBusy(report.getIdleTick()) + " %"});
                     out.write(formattedRow);
                     out.write(System.getProperty("line.separator"));
                 } else if (report instanceof ExceptionReport) {

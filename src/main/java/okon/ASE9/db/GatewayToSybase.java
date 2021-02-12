@@ -1,6 +1,7 @@
-package okon.ASE9;
+package okon.ASE9.db;
 
 import com.sybase.jdbc4.jdbc.SybDataSource;
+import okon.ASE9.Job;
 import okon.ASE9.exception.AppException;
 import okon.ASE9.exception.ConnectionException;
 
@@ -8,11 +9,11 @@ import javax.sql.DataSource;
 import java.io.Closeable;
 import java.sql.*;
 
-public class GatewaySybase implements Closeable {
+public class GatewayToSybase implements Closeable {
     private static final String sysmonStatement = "sp_sysmon ?, kernel";
     private Connection db;
 
-    public GatewaySybase(Job job) {
+    public GatewayToSybase(Job job) {
         try {
             db = createDataSource(job.getServer().getIp(), job.getServer().getPort(), job.getAuthorization().getUsername(),
                     job.getAuthorization().getPassword()).getConnection();
@@ -36,7 +37,7 @@ public class GatewaySybase implements Closeable {
         dataSource.setUser(user);
         dataSource.setPassword(password);
         dataSource.setDatabaseName("master");
-        dataSource.setAPPLICATIONNAME("ASE9");
+        dataSource.setAPPLICATIONNAME("okon/ASE9");
         return dataSource;
     }
 

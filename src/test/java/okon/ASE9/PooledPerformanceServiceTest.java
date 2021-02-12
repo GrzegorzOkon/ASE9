@@ -1,5 +1,6 @@
 package okon.ASE9;
 
+import okon.ASE9.service.PooledPerformanceService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,10 +9,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.sql.SQLWarning;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PerformanceServicePooledTest {
+public class PooledPerformanceServiceTest {
+    PooledPerformanceService service = new PooledPerformanceService(null);
+
     @Mock
     private SQLWarning sqlWarningMock;
 
@@ -19,6 +22,7 @@ public class PerformanceServicePooledTest {
     public void setUp() throws Exception {
         setUpWarnings();
     }
+
     private void setUpWarnings() {
         sqlWarningMock = new SQLWarning(new SQLWarning("	DBCC execution completed. If DBCC printed error messages, contact a user with System Administrator (SA) role.	"));
         sqlWarningMock.setNextWarning(new SQLWarning("		"));
@@ -307,8 +311,7 @@ public class PerformanceServicePooledTest {
     }
 
     @Test
-    public void shouldSayThatThreadUtilizationSectionIsEqual() {    
-        PerformanceServicePooled service = new PerformanceServicePooled(null);
+    public void shouldSayThatThreadUtilizationSectionIsEqual() {
         String correctThreadUtilizationSection = "Thread Utilization (OS %)     User Busy   System Busy        Idle\n" +
                 "-------------------------  ------------  ------------  ----------\n" +
                 "ThreadPool : aes_pool\n" +
@@ -366,5 +369,46 @@ public class PerformanceServicePooledTest {
             threadUtilizationSection = service.substringThreadUtilizationSection(warnings.toString());
         } catch (Exception ex) {}
         assertEquals(correctThreadUtilizationSection, threadUtilizationSection);
+    }
+
+    @Test
+    public void shouldSayThatPoolIsNotEmpty() {
+        String pool = "ThreadPool : aes_pool\n" +
+                "Thread 17   (Engine 11)         10.4 %         0.2 %      89.4 %\n" +
+                "Thread 18   (Engine 12)         17.6 %         0.6 %      81.8 %\n" +
+                "Thread 19   (Engine 13)         16.2 %         0.6 %      83.2 %\n" +
+                "Thread 20   (Engine 14)         11.2 %         0.4 %      88.4 %\n" +
+                "Thread 21   (Engine 15)         13.4 %         0.4 %      86.2 %\n" +
+                "-------------------------  ------------  ------------  ----------\n" +
+                "Pool Summary      Total          68.8 %         2.2 %     429.0 %\n" +
+                "Average          13.8 %         0.4 %      85.8 %";
+        assertFalse(service.isEmptyPool(pool));
+    }
+
+    @Test
+    public void shouldSayThatPoolIsEmpty() {
+        String pool = "ThreadPool : syb_blocking_pool : no activity during sample";
+        assertTrue(service.isEmptyPool(pool));
+    }
+
+    @Test
+    public void shouldSayThatThreadReportIsEqual() {
+        String pool = "ThreadPool : aes_pool\n" +
+                "Thread 17   (Engine 11)         10.4 %         0.2 %      89.4 %\n" +
+                "Thread 18   (Engine 12)         17.6 %         0.6 %      81.8 %\n" +
+                "Thread 19   (Engine 13)         16.2 %         0.6 %      83.2 %\n" +
+                "Thread 20   (Engine 14)         11.2 %         0.4 %      88.4 %\n" +
+                "Thread 21   (Engine 15)         13.4 %         0.4 %      86.2 %\n" +
+                "-------------------------  ------------  ------------  ----------\n" +
+                "Pool Summary      Total          68.8 %         2.2 %     429.0 %\n" +
+                "Average          13.8 %         0.4 %      85.8 %";
+        PerformanceReport correctReport = new PerformanceReport();
+        correctReport.setUserBusyOS("13.8");
+        correctReport.setSystemBusyOS("0.4");
+        correctReport.setIdleOS("85.8");
+        PerformanceReport report = service.extractThreadUsage(pool);
+        assertEquals(correctReport.getUserBusyOS(), report.getUserBusyOS());
+        assertEquals(correctReport.getSystemBusyOS(), report.getSystemBusyOS());
+        assertEquals(correctReport.getIdleOS(), report.getIdleOS());
     }
 }

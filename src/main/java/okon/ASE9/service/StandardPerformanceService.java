@@ -1,5 +1,9 @@
-package okon.ASE9;
+package okon.ASE9.service;
 
+import okon.ASE9.PerformanceReport;
+import okon.ASE9.Report;
+import okon.ASE9.Server;
+import okon.ASE9.db.GatewayToSybase;
 import okon.ASE9.exception.AppException;
 
 import java.sql.SQLException;
@@ -9,10 +13,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PerformanceServiceStandard extends PerformanceService {
-    private GatewaySybase db;
+public class StandardPerformanceService extends PerformanceService {
+    private GatewayToSybase db;
 
-    public PerformanceServiceStandard(GatewaySybase db) {
+    public StandardPerformanceService(GatewayToSybase db) {
         this.db = db;
     }
 
@@ -48,8 +52,8 @@ public class PerformanceServiceStandard extends PerformanceService {
         Matcher matcher = pattern.matcher(systemReport);
         matcher.find();
         result.setCpuBusy(matcher.group(1));
-        result.setIoBusy(matcher.group(2));
-        result.setIdle(matcher.group(3));
+        result.setIoBusyTick(matcher.group(2));
+        result.setIdleTick(matcher.group(3));
         return result;
     }
 

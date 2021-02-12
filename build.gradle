@@ -6,13 +6,14 @@ group 'ASE9'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(include: ['*.jar'], dir: 'lib')
     compile group: 'org.w3c', name: 'dom', version: '2.3.0-jaxb-1.0.6'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
@@ -21,11 +22,11 @@ dependencies {
 
 sourceSets {
     main {
-        java.srcDirs = ['src\\main']
+        java.srcDirs = ['src\\main\\java']
     }
 
     test {
-        java.srcDirs = ['src\\test']
+        java.srcDirs = ['src\\test\\java']
     }
 }
 

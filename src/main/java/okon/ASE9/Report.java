@@ -6,10 +6,13 @@ public class Report {
     private String serverName = "";
     private String threadPool = "";
     private String cpuBusy = "";
-    private String userBusy = "";
-    private String systemBusy = "";
-    private String ioBusy = "";
-    private String idle = "";
+    private String userBusyTick = "";
+    private String systemBusyTick = "";
+    private String ioBusyTick = "";
+    private String idleTick = "";
+    private String userBusyOS = "";
+    private String systemBusyOS = "";
+    private String idleOS = "";
 
     public Report() {}
 
@@ -41,35 +44,47 @@ public class Report {
         this.threadPool = threadPool;
     }
 
-    public String getUserBusy() {
-        return userBusy;
+    public String getUserBusyTick() {
+        return userBusyTick;
     }
 
-    public void setUserBusy(String userBusy) {
-        this.userBusy = userBusy;
+    public void setUserBusyTick(String userBusyTick) {
+        this.userBusyTick = userBusyTick;
     }
 
-    public String getSystemBusy() {
-        return systemBusy;
+    public String getSystemBusyTick() {
+        return systemBusyTick;
     }
 
-    public void setSystemBusy(String systemBusy) {
-        this.systemBusy = systemBusy;
+    public void setSystemBusyTick(String systemBusyTick) {
+        this.systemBusyTick = systemBusyTick;
     }
 
-    public String getIoBusy() {
-        return ioBusy;
+    public String getIoBusyTick() {
+        return ioBusyTick;
     }
 
-    public void setIoBusy(String ioBusy) {
-        this.ioBusy = ioBusy;
+    public void setIoBusyTick(String ioBusyTick) {
+        this.ioBusyTick = ioBusyTick;
     }
 
-    public String getIdle() {
-        return idle;
+    public String getIdleTick() {
+        return idleTick;
     }
 
-    public void setIdle(String idle) {
-        this.idle = idle;
+    public void setIdleTick(String idleTick) {
+        this.idleTick = idleTick;
     }
+
+    public String getUserBusyOS() { return userBusyOS; }
+
+    public void setUserBusyOS(String userBusyOS) { this.userBusyOS = userBusyOS; }
+
+    public String getSystemBusyOS() { return systemBusyOS; }
+
+    public void setSystemBusyOS(String systemBusyOS) { this.systemBusyOS = systemBusyOS; }
+
+    public String getIdleOS() { return idleOS; }
+
+    public void setIdleOS(String idleOS) { this.idleOS = idleOS; }
 }
