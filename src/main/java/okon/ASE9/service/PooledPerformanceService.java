@@ -31,13 +31,10 @@ public class PooledPerformanceService extends PerformanceService {
             if (serverVersion.contains("Cluster")) {
                 String engineUtilizationSection = substringEngineUtilizationSection(readableSystemRaport);
                 String threadUtilizationSection = substringThreadUtilizationSection(readableSystemRaport);
-                List<Report> engines = checkEnginePools(engineUtilizationSection);
-                List<Report> threads = checkThreadPools(threadUtilizationSection);
-                /*for(Report message : result) {
-                    message.setServerName(serverName);
-                    message.setAlias(server.getAlias());
-                    message.setServerIP(server.getIp());
-                }*/
+                List<PerformanceReport> engines = checkEnginePools(engineUtilizationSection);
+                List<PerformanceReport> threads = checkThreadPools(threadUtilizationSection);
+                result = joinTheSamePools(engines, threads);
+                setServerProperties(result, serverName, server);
             }
         } catch (SQLException e) {
             throw new AppException(e);
@@ -79,8 +76,8 @@ public class PooledPerformanceService extends PerformanceService {
                         readableSystemRaport.indexOf("-------------------------  ------------  ------------  ----------\n" + "Server Summary") + 1));
     }
 
-    private List<Report> checkEnginePools(String engineSection) {
-        List<Report> result = new ArrayList();
+    private List<PerformanceReport> checkEnginePools(String engineSection) {
+        List<PerformanceReport> result = new ArrayList();
         String[] enginePoolSections = engineSection.split("\n\n");
         for (int i = 0; i < enginePoolSections.length; i++) {
             if (!isEmptyPool(enginePoolSections[i])) {
@@ -90,8 +87,8 @@ public class PooledPerformanceService extends PerformanceService {
         return result;
     }
 
-    private List<Report> checkThreadPools(String threadSection) {
-        List<Report> result = new ArrayList<>();
+    private List<PerformanceReport> checkThreadPools(String threadSection) {
+        List<PerformanceReport> result = new ArrayList<>();
         String[] threadPoolSections = threadSection.split("\n\n");
         for (int i = 0; i < threadPoolSections.length; i++) {
             if (!isEmptyPool(threadPoolSections[i])) {
@@ -136,5 +133,32 @@ public class PooledPerformanceService extends PerformanceService {
         result.setSystemBusyOS(matcher.group(2));
         result.setIdleOS(matcher.group(3));
         return result;
+    }
+
+    private List<Report> joinTheSamePools(List<PerformanceReport> engines, List<PerformanceReport> threads) {
+        List<Report> result = new ArrayList<>();
+        for (PerformanceReport engine : engines) {
+            for (PerformanceReport thread : threads) {
+                if (engine.getThreadPool().equals(thread.getThreadPool())) {
+                    PerformanceReport report = new PerformanceReport();
+                    report.setUserBusyTick(engine.getUserBusyTick());
+                    report.setSystemBusyTick(engine.getSystemBusyTick());
+                    report.setIoBusyTick(engine.getIoBusyTick());
+                    report.setUserBusyOS(thread.getUserBusyOS());
+                    report.setSystemBusyOS(thread.getSystemBusyOS());
+                    report.setIdleOS(thread.getIdleOS());
+                    result.add(report);
+                }
+            }
+        }
+        return result;
+    }
+
+    private void setServerProperties(List<Report> reports, String serverName, Server server) {
+        for(Report message : reports) {
+            message.setServerName(serverName);
+            message.setAlias(server.getAlias());
+            message.setServerIP(server.getIp());
+        }
     }
 }

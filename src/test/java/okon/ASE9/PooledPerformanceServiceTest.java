@@ -402,11 +402,11 @@ public class PooledPerformanceServiceTest {
                 "-------------------------  ------------  ------------  ----------\n" +
                 "Pool Summary      Total          68.8 %         2.2 %     429.0 %\n" +
                 "Average          13.8 %         0.4 %      85.8 %";
-        PerformanceReport correctReport = new PerformanceReport();
+        Report correctReport = new Report();
         correctReport.setUserBusyOS("13.8");
         correctReport.setSystemBusyOS("0.4");
         correctReport.setIdleOS("85.8");
-        PerformanceReport report = service.extractThreadUsage(pool);
+        Report report = service.extractThreadUsage(pool);
         assertEquals(correctReport.getUserBusyOS(), report.getUserBusyOS());
         assertEquals(correctReport.getSystemBusyOS(), report.getSystemBusyOS());
         assertEquals(correctReport.getIdleOS(), report.getIdleOS());
