@@ -6,8 +6,6 @@ import okon.ASE9.config.ServerConfigReader;
 import okon.ASE9.exception.AppException;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,14 +13,15 @@ import java.util.Queue;
 
 public class ASE9App {
     static final Queue<Job> jobs = new LinkedList<>();
-    static final List<Report> messages = new ArrayList();
+    static final List<Report> extractions = new ArrayList();
 
     static final String CONNECTION_EXCEPTION_COMMUNICATE = "connection error to";
 
     public static void main(String[] args) {
         initializeQueue();
         startThreadPool(jobs.size());
-        print();
+        new ReportPrinter().print(extractions);
+        //print();
     }
 
     static void initializeQueue() {
@@ -60,7 +59,7 @@ public class ASE9App {
     static void startThreadPool(int threadSum) {
         Thread[] threads = new Thread[threadSum];
         for (int i = 0; i < threadSum; i++) {
-            threads[i] = new ReportProducerThread();
+            threads[i] = new JobConsumentThread();
         }
         for (int i = 0; i < threadSum; i++) {
             threads[i].start();
@@ -74,7 +73,7 @@ public class ASE9App {
         }
     }
 
-    static void print() {
+    /*static void print() {
         if (isThreadPoolPresent()) {
             printWithThreadPoolColumnToConsole();
             printWithThreadPoolColumnToFile();
@@ -82,13 +81,13 @@ public class ASE9App {
             printWithoutThreadPoolColumnToConsole();
             printWithoutThreadPoolColumnToFile();
         }
-    }
+    }*/
 
-    static void printWithThreadPoolColumnToConsole() {
+    /*static void printWithThreadPoolColumnToConsole() {
         ReportFormatter formatter = new ReportFormatter(true);
         System.out.println(formatter.format(new String[]{"Server", "Thread Pool", "CPU Busy"}));
         System.out.println(formatter.format(new String[]{"------", "-----------", "--------"}));
-        for (Report report : messages) {
+        for (Report report : extractions) {
             if (report instanceof PerformanceReport) {
                 String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
                         report.getThreadPool(), formatter.getCPUBusy(report.getIdleTick()) + " %"});
@@ -99,16 +98,16 @@ public class ASE9App {
                 System.out.println(formattedRow);
             }
         }
-    }
+    }*/
 
-    static void printWithThreadPoolColumnToFile() {
+    /*static void printWithThreadPoolColumnToFile() {
         try (Writer out = new FileWriter(new java.io.File(ASE9App.getJarFileName() + ".txt"))) {
             ReportFormatter formatter = new ReportFormatter(true);
             out.write(formatter.format(new String[]{"Server", "Thread Pool", "CPU Busy"}));
             out.write(System.getProperty("line.separator"));
             out.write(formatter.format(new String[]{"------", "-----------", "--------"}));
             out.write(System.getProperty("line.separator"));
-            for (Report report : messages) {
+            for (Report report : extractions) {
                 if (report instanceof PerformanceReport) {
                     String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
                             report.getThreadPool(), formatter.getCPUBusy(report.getIdleTick()) + " %"});
@@ -124,13 +123,13 @@ public class ASE9App {
         } catch (Exception e) {
             throw new AppException(e);
         }
-    }
+    }*/
 
-    static void printWithoutThreadPoolColumnToConsole() {
+    /*static void printWithoutThreadPoolColumnToConsole() {
         ReportFormatter formatter = new ReportFormatter(false);
         System.out.println(formatter.format(new String[]{"Server", "CPU Busy"}));
         System.out.println(formatter.format(new String[]{"------", "--------"}));
-        for (Report report : messages) {
+        for (Report report : extractions) {
             if (report instanceof PerformanceReport) {
                 String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
                         formatter.getCPUBusy(report.getIdleTick()) + " %"});
@@ -141,16 +140,16 @@ public class ASE9App {
                 System.out.println(formattedRow);
             }
         }
-    }
+    }*/
 
-    static void printWithoutThreadPoolColumnToFile() {
+    /*static void printWithoutThreadPoolColumnToFile() {
         try (Writer out = new FileWriter(new java.io.File(ASE9App.getJarFileName() + ".txt"))) {
             ReportFormatter formatter = new ReportFormatter(false);
             out.write(formatter.format(new String[]{"Server", "CPU Busy"}));
             out.write(System.getProperty("line.separator"));
             out.write(formatter.format(new String[]{"------", "--------"}));
             out.write(System.getProperty("line.separator"));
-            for (Report report : messages) {
+            for (Report report : extractions) {
                 if (report instanceof PerformanceReport) {
                     String formattedRow = formatter.format(new String[]{report.getAlias() + " (" + report.getServerIP() + ")",
                             formatter.getCPUBusy(report.getIdleTick()) + " %"});
@@ -166,16 +165,16 @@ public class ASE9App {
         } catch (Exception e) {
             throw new AppException(e);
         }
-    }
+    }*/
 
-    static boolean isThreadPoolPresent() {
-        for (Report report : messages) {
+    /*static boolean isThreadPoolPresent() {
+        for (Report report : extractions) {
             if (!report.getThreadPool().equals("")) {
                 return true;
             }
         }
         return false;
-    }
+    }*/
 
     static String getJarFileName() {
         String path = ASE9App.class.getResource(ASE9App.class.getSimpleName() + ".class").getFile();

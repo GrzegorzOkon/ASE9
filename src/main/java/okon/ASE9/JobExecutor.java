@@ -10,7 +10,7 @@ import okon.ASE9.service.PerformanceServiceFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReportManager {
+public class JobExecutor {
     public static List<Report> getMessages(Job job) {
         List<Report> result = new ArrayList<>();
         try (GatewayToSybase db = GatewayFactory.make(job)) {

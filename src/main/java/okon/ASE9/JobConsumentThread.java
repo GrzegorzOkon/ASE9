@@ -3,9 +3,9 @@ package okon.ASE9;
 import java.util.List;
 
 import static okon.ASE9.ASE9App.jobs;
-import static okon.ASE9.ASE9App.messages;
+import static okon.ASE9.ASE9App.extractions;
 
-public class ReportProducerThread extends Thread {
+public class JobConsumentThread extends Thread {
     @Override
     public void run() {
         while (!jobs.isEmpty()) {
@@ -16,10 +16,10 @@ public class ReportProducerThread extends Thread {
                 }
             }
             if (job != null) {
-                List<Report> messageList = ReportManager.getMessages(job);
-                synchronized (messages) {
+                List<Report> messageList = JobExecutor.getMessages(job);
+                synchronized (extractions) {
                     for (Report message : messageList)
-                        messages.add(message);
+                        extractions.add(message);
                 }
             }
         }
