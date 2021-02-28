@@ -1,33 +1,30 @@
 package okon.ASE9;
 
 import okon.ASE9.config.AuthorizationConfigReader;
-import okon.ASE9.config.CommandConfigReader;
+import okon.ASE9.config.ProcedureConfigReader;
+import okon.ASE9.config.ProgramConfigReader;
 import okon.ASE9.config.ServerConfigReader;
 import okon.ASE9.exception.AppException;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class ASE9App {
+    static final Properties parameters;
     static final Queue<Job> jobs = new LinkedList<>();
     static final List<Report> extractions = new ArrayList();
 
     static final String CONNECTION_EXCEPTION_COMMUNICATE = "connection error to";
 
-    public static void main(String[] args) {
+    static {
+        parameters = ProgramConfigReader.loadProperties((new File("./config/program.xml")));
         initializeQueue();
-        startThreadPool(jobs.size());
-        new ReportPrinter().print(extractions);
-        //print();
     }
 
     static void initializeQueue() {
         List<Server> servers = ServerConfigReader.readParams((new File("./config/servers.xml")));
         List<Authorization> authorizations = AuthorizationConfigReader.readParams((new File("./config/server-auth.xml")));
-        String time = CommandConfigReader.readParameter(new File("./config/command.xml"));
+        String time = ProcedureConfigReader.readParameter(new File("./config/procedure.xml"));
         createJobs(servers, authorizations, time);
     }
 
@@ -54,6 +51,12 @@ public class ASE9App {
             return true;
         }
         return false;
+    }
+
+    public static void main(String[] args) {
+        startThreadPool(jobs.size());
+        new ReportPrinter().print(extractions);
+        //print();
     }
 
     static void startThreadPool(int threadSum) {

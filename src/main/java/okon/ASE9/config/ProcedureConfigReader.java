@@ -10,7 +10,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 
-public class CommandConfigReader {
+public class ProcedureConfigReader {
     public static String readParameter(File file) {
         String result = "";
         Element command = parseXml(file);
