@@ -1,19 +1,15 @@
 package okon.ASE9;
 
-public class PerformanceReport extends Report {
-    private String cpuBusy = "";
+public class PerformanceExtraction extends Extraction {
     private String userBusyTick = "";
     private String systemBusyTick = "";
     private String ioBusyTick = "";
+    private String idleTick = "";
     private String userBusyOS = "";
     private String systemBusyOS = "";
     private String idleOS = "";
 
-    public PerformanceReport() {}
-
-    public String getCpuBusy() { return cpuBusy; }
-
-    public void setCpuBusy(String cpuBusy) { this.cpuBusy = cpuBusy; }
+    public PerformanceExtraction() {}
 
     public String getUserBusyTick() {
         return userBusyTick;
@@ -38,6 +34,10 @@ public class PerformanceReport extends Report {
     public void setIoBusyTick(String ioBusyTick) {
         this.ioBusyTick = ioBusyTick;
     }
+
+    public String getIdleTick() { return idleTick; }
+
+    public void setIdleTick(String idleTick) { this.idleTick = idleTick; }
 
     public String getUserBusyOS() { return userBusyOS; }
 

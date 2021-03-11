@@ -5,19 +5,20 @@ import okon.ASE9.config.ProcedureConfigReader;
 import okon.ASE9.config.ProgramConfigReader;
 import okon.ASE9.config.ServerConfigReader;
 import okon.ASE9.exception.AppException;
+import okon.ASE9.report.Printer;
 
 import java.io.File;
 import java.util.*;
 
 public class ASE9App {
-    static final Properties parameters;
-    static final Queue<Job> jobs = new LinkedList<>();
-    static final List<Report> extractions = new ArrayList();
+    public static final Properties parameters;
+    public static final Queue<Job> jobs = new LinkedList<>();
+    public static final List<Extraction> extractions = new ArrayList();
 
     static final String CONNECTION_EXCEPTION_COMMUNICATE = "connection error to";
 
     static {
-        parameters = ProgramConfigReader.loadProperties((new File("./config/program.xml")));
+        parameters = ProgramConfigReader.loadProperties((new File("./config/program.properties")));
         initializeQueue();
     }
 
@@ -54,12 +55,12 @@ public class ASE9App {
     }
 
     public static void main(String[] args) {
-        startThreadPool(jobs.size());
-        new ReportPrinter().print(extractions);
-        //print();
+        startThreadPool();
+        print();
     }
 
-    static void startThreadPool(int threadSum) {
+    static void startThreadPool() {
+        int threadSum = jobs.size();
         Thread[] threads = new Thread[threadSum];
         for (int i = 0; i < threadSum; i++) {
             threads[i] = new JobConsumentThread();
@@ -179,7 +180,11 @@ public class ASE9App {
         return false;
     }*/
 
-    static String getJarFileName() {
+    private static void print() {
+        new Printer().print();
+    }
+
+    public static String getJarFileName() {
         String path = ASE9App.class.getResource(ASE9App.class.getSimpleName() + ".class").getFile();
         path = path.substring(0, path.lastIndexOf('!'));
         path = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf('.'));

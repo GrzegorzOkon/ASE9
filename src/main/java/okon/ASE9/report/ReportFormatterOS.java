@@ -1,11 +1,6 @@
-package okon.ASE9;
+package okon.ASE9.report;
 
-import java.text.NumberFormat;
-
-import static okon.ASE9.ASE9App.CONNECTION_EXCEPTION_COMMUNICATE;
-import static okon.ASE9.ASE9App.extractions;
-
-public class ReportFormatter {
+public class ReportFormatterOS extends ReportFormatter {
     private final StringBuilder format = new StringBuilder("%-19s" + "%14s" + "%18s" + "%18s");
 
     /*public ReportFormatter(boolean threadPoolColumn) {

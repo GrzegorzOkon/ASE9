@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JobExecutor {
-    public static List<Report> getMessages(Job job) {
-        List<Report> result = new ArrayList<>();
+    public static List<Extraction> getMessages(Job job) {
+        List<Extraction> result = new ArrayList<>();
         try (GatewayToSybase db = GatewayFactory.make(job)) {
             PerformanceService service = PerformanceServiceFactory.make(job, db);
             result = service.reportProcessorPerformance(job.getTime(), job.getServer());
         } catch (ConnectionException e) {
-            Report report = new ExceptionReport();
+            Extraction report = new ExceptionExtraction();
             report.setAlias(job.getServer().getAlias());
             report.setServerIP(job.getServer().getIp());
             result.add(report);

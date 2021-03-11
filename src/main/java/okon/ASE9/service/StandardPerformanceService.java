@@ -1,7 +1,7 @@
 package okon.ASE9.service;
 
-import okon.ASE9.PerformanceReport;
-import okon.ASE9.Report;
+import okon.ASE9.PerformanceExtraction;
+import okon.ASE9.Extraction;
 import okon.ASE9.Server;
 import okon.ASE9.db.GatewayToSybase;
 import okon.ASE9.exception.AppException;
@@ -21,12 +21,12 @@ public class StandardPerformanceService extends PerformanceService {
     }
 
     @Override
-    public List<Report> reportProcessorPerformance(String time, Server server) {
-        List<Report> result = new ArrayList<>();
+    public List<Extraction> reportProcessorPerformance(String time, Server server) {
+        List<Extraction> result = new ArrayList<>();
         try {
             SQLWarning rawSystemReport = db.findLoadFor(time);
             String systemReport = transformToPlainText(rawSystemReport);
-            Report report = matchStatistics(systemReport);
+            Extraction report = matchStatistics(systemReport);
             report.setServerName(matchServerName(systemReport));
             report.setAlias(server.getAlias());
             report.setServerIP(server.getIp());
@@ -46,12 +46,12 @@ public class StandardPerformanceService extends PerformanceService {
         return result.toString();
     }
 
-    public Report matchStatistics(String systemReport) {
-        PerformanceReport result = new PerformanceReport();
+    public Extraction matchStatistics(String systemReport) {
+        PerformanceExtraction result = new PerformanceExtraction();
         Pattern pattern = Pattern.compile("Average\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%");
         Matcher matcher = pattern.matcher(systemReport);
         matcher.find();
-        result.setCpuBusy(matcher.group(1));
+        //result.setIdleTick(matcher.group(1));
         result.setIoBusyTick(matcher.group(2));
         result.setIdleTick(matcher.group(3));
         return result;

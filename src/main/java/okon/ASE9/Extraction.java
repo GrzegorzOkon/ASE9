@@ -1,11 +1,10 @@
 package okon.ASE9;
 
-public class Report {
+public class Extraction {
     private String alias = "";
     private String serverIP = "";
     private String serverName = "";
     private String threadPool = "";
-    private String idleTick = "";
 
     public String getAlias() { return alias; }
 
@@ -29,13 +28,5 @@ public class Report {
 
     public void setThreadPool(String threadPool) {
         this.threadPool = threadPool;
-    }
-
-    public String getIdleTick() {
-        return idleTick;
-    }
-
-    public void setIdleTick(String idleTick) {
-        this.idleTick = idleTick;
     }
 }

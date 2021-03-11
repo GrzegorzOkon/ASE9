@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import sun.misc.Perf;
 
 import java.sql.SQLWarning;
 
@@ -403,11 +402,11 @@ public class PooledPerformanceServiceTest {
                 "-------------------------  ------------  ------------  ----------\n" +
                 "Pool Summary      Total          68.8 %         2.2 %     429.0 %\n" +
                 "Average          13.8 %         0.4 %      85.8 %";
-        PerformanceReport correctReport = new PerformanceReport();
+        PerformanceExtraction correctReport = new PerformanceExtraction();
         correctReport.setUserBusyOS("13.8");
         correctReport.setSystemBusyOS("0.4");
         correctReport.setIdleOS("85.8");
-        PerformanceReport report = service.extractThreadUsage(pool);
+        PerformanceExtraction report = service.extractThreadUsage(pool);
         assertEquals(correctReport.getUserBusyOS(), report.getUserBusyOS());
         assertEquals(correctReport.getSystemBusyOS(), report.getSystemBusyOS());
         assertEquals(correctReport.getIdleOS(), report.getIdleOS());

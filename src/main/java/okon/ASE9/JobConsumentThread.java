@@ -16,9 +16,9 @@ public class JobConsumentThread extends Thread {
                 }
             }
             if (job != null) {
-                List<Report> messageList = JobExecutor.getMessages(job);
+                List<Extraction> messageList = JobExecutor.getMessages(job);
                 synchronized (extractions) {
-                    for (Report message : messageList)
+                    for (Extraction message : messageList)
                         extractions.add(message);
                 }
             }
