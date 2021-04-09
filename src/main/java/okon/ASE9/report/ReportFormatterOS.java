@@ -60,6 +60,7 @@ public class ReportFormatterOS extends ReportFormatter {
         }
     }*/
 
+    @Override
     public String format(String[] input) {
         return String.format(format.toString(), input);
     }

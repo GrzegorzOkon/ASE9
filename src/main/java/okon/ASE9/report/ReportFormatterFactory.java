@@ -5,7 +5,7 @@ public class ReportFormatterFactory {
         if (format.toUpperCase().equals("TICK")) {
             return new ReportFormatterTick();
         } else if (format.toUpperCase().equals("TICK, OS")) {
-            return null;
+            return new ReportFormatterTickOS();
         } else {
             return new ReportFormatterOS();
         }
