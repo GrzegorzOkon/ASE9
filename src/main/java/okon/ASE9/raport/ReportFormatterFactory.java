@@ -1,4 +1,4 @@
-package okon.ASE9.report;
+package okon.ASE9.raport;
 
 public class ReportFormatterFactory {
     public ReportFormatter make(String format) {

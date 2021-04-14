@@ -1,4 +1,4 @@
-package okon.ASE9.report;
+package okon.ASE9.raport;
 
 import okon.ASE9.ASE9App;
 import okon.ASE9.Extraction;

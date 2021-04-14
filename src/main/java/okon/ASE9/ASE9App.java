@@ -5,7 +5,7 @@ import okon.ASE9.config.ProcedureConfigReader;
 import okon.ASE9.config.ProgramConfigReader;
 import okon.ASE9.config.ServerConfigReader;
 import okon.ASE9.exception.AppException;
-import okon.ASE9.report.Printer;
+import okon.ASE9.raport.Printer;
 
 import java.io.File;
 import java.util.*;

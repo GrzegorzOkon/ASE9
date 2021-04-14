@@ -24,13 +24,13 @@ public class StandardPerformanceService extends PerformanceService {
     public List<Extraction> reportProcessorPerformance(String time, Server server) {
         List<Extraction> result = new ArrayList<>();
         try {
-            SQLWarning rawSystemReport = db.findLoadFor(time);
-            String systemReport = transformToPlainText(rawSystemReport);
-            Extraction report = matchStatistics(systemReport);
-            report.setServerName(matchServerName(systemReport));
-            report.setAlias(server.getAlias());
-            report.setServerIP(server.getIp());
-            result.add(report);
+            SQLWarning systemRaport = db.findLoadFor(time);
+            String readableSystemRaport = transformToPlainText(systemRaport);
+            Extraction raport = extractEngineUsage(readableSystemRaport);
+            raport.setAlias(server.getAlias());
+            raport.setServerIP(server.getIp());
+            raport.setServerName(extractServerName(readableSystemRaport));
+            result.add(raport);
         } catch (SQLException e) {
             throw new AppException(e);
         }
@@ -46,20 +46,20 @@ public class StandardPerformanceService extends PerformanceService {
         return result.toString();
     }
 
-    public Extraction matchStatistics(String systemReport) {
+    public Extraction extractEngineUsage(String readableSystemRaport) {
         PerformanceExtraction result = new PerformanceExtraction();
         Pattern pattern = Pattern.compile("Average\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%");
-        Matcher matcher = pattern.matcher(systemReport);
+        Matcher matcher = pattern.matcher(readableSystemRaport);
         matcher.find();
-        //result.setIdleTick(matcher.group(1));
-        result.setIoBusyTick(matcher.group(2));
-        result.setIdleTick(matcher.group(3));
+        result.setCpuBusy(matcher.group(1));
+        result.setIoBusy(matcher.group(2));
+        result.setIdle(matcher.group(3));
         return result;
     }
 
-    public String matchServerName(String systemRaport) {
+    public String extractServerName(String readableSystemRaport) {
         Pattern pattern = Pattern.compile("Server Name:\\s+(\\w+)\n");
-        Matcher matcher = pattern.matcher(systemRaport);
+        Matcher matcher = pattern.matcher(readableSystemRaport);
         matcher.find();
         return matcher.group(1);
     }

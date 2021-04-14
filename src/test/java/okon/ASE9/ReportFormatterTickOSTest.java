@@ -1,7 +1,7 @@
 package okon.ASE9;
 
 import static org.junit.Assert.*;
-import okon.ASE9.report.ReportFormatterTickOS;
+import okon.ASE9.raport.ReportFormatterTickOS;
 import org.junit.Test;
 
 public class ReportFormatterTickOSTest {
