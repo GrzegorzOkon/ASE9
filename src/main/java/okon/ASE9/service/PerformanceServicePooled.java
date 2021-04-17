@@ -1,8 +1,6 @@
 package okon.ASE9.service;
 
-import okon.ASE9.PerformanceExtraction;
-import okon.ASE9.Extraction;
-import okon.ASE9.Server;
+import okon.ASE9.config.Server;
 import okon.ASE9.db.GatewayToSybase;
 import okon.ASE9.exception.AppException;
 
@@ -13,10 +11,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PooledPerformanceService extends PerformanceService {
+public class PerformanceServicePooled extends PerformanceService {
     private GatewayToSybase db;
 
-    public PooledPerformanceService(GatewayToSybase db) {
+    public PerformanceServicePooled(GatewayToSybase db) {
         this.db = db;
     }
 
@@ -31,8 +29,8 @@ public class PooledPerformanceService extends PerformanceService {
             if (serverVersion.contains("Cluster")) {
                 String engineUtilizationSection = substringEngineUtilizationSection(readableSystemRaport);
                 String threadUtilizationSection = substringThreadUtilizationSection(readableSystemRaport);
-                List<PerformanceExtraction> engines = checkEnginePools(engineUtilizationSection);
-                List<PerformanceExtraction> threads = checkThreadPools(threadUtilizationSection);
+                List<PerformanceExtractionPooled> engines = checkEnginePools(engineUtilizationSection);
+                List<PerformanceExtractionPooled> threads = checkThreadPools(threadUtilizationSection);
                 result = joinTheSamePools(engines, threads);
                 setServerProperties(result, serverName, server);
             }
@@ -76,8 +74,8 @@ public class PooledPerformanceService extends PerformanceService {
                         readableSystemRaport.indexOf("-------------------------  ------------  ------------  ----------\n" + "Server Summary") + 1));
     }
 
-    private List<PerformanceExtraction> checkEnginePools(String engineSection) {
-        List<PerformanceExtraction> result = new ArrayList();
+    private List<PerformanceExtractionPooled> checkEnginePools(String engineSection) {
+        List<PerformanceExtractionPooled> result = new ArrayList();
         String[] enginePoolSections = engineSection.split("\n\n");
         for (int i = 0; i < enginePoolSections.length; i++) {
             if (!isEmptyPool(enginePoolSections[i])) {
@@ -87,8 +85,8 @@ public class PooledPerformanceService extends PerformanceService {
         return result;
     }
 
-    private List<PerformanceExtraction> checkThreadPools(String threadSection) {
-        List<PerformanceExtraction> result = new ArrayList<>();
+    private List<PerformanceExtractionPooled> checkThreadPools(String threadSection) {
+        List<PerformanceExtractionPooled> result = new ArrayList<>();
         String[] threadPoolSections = threadSection.split("\n\n");
         for (int i = 0; i < threadPoolSections.length; i++) {
             if (!isEmptyPool(threadPoolSections[i])) {
@@ -104,8 +102,8 @@ public class PooledPerformanceService extends PerformanceService {
         return true;
     }
 
-    private PerformanceExtraction extractEngineUsage(String enginePoolSection) {
-        PerformanceExtraction result = new PerformanceExtraction();
+    private PerformanceExtractionPooled extractEngineUsage(String enginePoolSection) {
+        PerformanceExtractionPooled result = new PerformanceExtractionPooled();
         Pattern pattern = Pattern.compile("ThreadPool :\\s(\\w+)\n");
         Matcher matcher = pattern.matcher(enginePoolSection);
         matcher.find();
@@ -120,8 +118,8 @@ public class PooledPerformanceService extends PerformanceService {
         return result;
     }
 
-    public PerformanceExtraction extractThreadUsage(String threadPoolSection) {
-        PerformanceExtraction result = new PerformanceExtraction();
+    public PerformanceExtractionPooled extractThreadUsage(String threadPoolSection) {
+        PerformanceExtractionPooled result = new PerformanceExtractionPooled();
         Pattern pattern = Pattern.compile("ThreadPool :\\s(\\w+)\n");
         Matcher matcher = pattern.matcher(threadPoolSection);
         matcher.find();
@@ -135,12 +133,12 @@ public class PooledPerformanceService extends PerformanceService {
         return result;
     }
 
-    private List<Extraction> joinTheSamePools(List<PerformanceExtraction> engines, List<PerformanceExtraction> threads) {
+    private List<Extraction> joinTheSamePools(List<PerformanceExtractionPooled> engines, List<PerformanceExtractionPooled> threads) {
         List<Extraction> result = new ArrayList<>();
-        for (PerformanceExtraction engine : engines) {
-            for (PerformanceExtraction thread : threads) {
+        for (PerformanceExtractionPooled engine : engines) {
+            for (PerformanceExtractionPooled thread : threads) {
                 if (engine.getThreadPool().equals(thread.getThreadPool())) {
-                    PerformanceExtraction report = new PerformanceExtraction();
+                    PerformanceExtractionPooled report = new PerformanceExtractionPooled();
                     report.setThreadPool(engine.getThreadPool());
                     report.setUserBusyTick(engine.getUserBusyTick());
                     report.setSystemBusyTick(engine.getSystemBusyTick());

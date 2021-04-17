@@ -1,6 +1,5 @@
 package okon.ASE9.config;
 
-import okon.ASE9.Authorization;
 import okon.ASE9.exception.AppException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

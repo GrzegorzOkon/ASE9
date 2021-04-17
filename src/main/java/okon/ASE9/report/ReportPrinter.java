@@ -1,4 +1,4 @@
-package okon.ASE9.raport;
+package okon.ASE9.report;
 
 public abstract class ReportPrinter {
     public abstract void print();

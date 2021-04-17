@@ -1,4 +1,4 @@
-package okon.ASE9;
+package okon.ASE9.service;
 
 public class Extraction {
     private String alias = "";

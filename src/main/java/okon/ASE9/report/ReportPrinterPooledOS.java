@@ -1,8 +1,8 @@
-package okon.ASE9.raport;
+package okon.ASE9.report;
 
 import okon.ASE9.ASE9App;
-import okon.ASE9.PerformanceExtraction;
-import okon.ASE9.Extraction;
+import okon.ASE9.service.PerformanceExtractionPooled;
+import okon.ASE9.service.Extraction;
 import okon.ASE9.exception.AppException;
 
 import java.io.FileWriter;
@@ -10,49 +10,56 @@ import java.io.Writer;
 import java.text.NumberFormat;
 import java.util.List;
 
-public class ReportPrinterOS extends ReportPrinter {
+public class ReportPrinterPooledOS extends ReportPrinter {
     private final ReportFormatter formatter;
+    private final List<Extraction> extraction;
 
-    public ReportPrinterOS(ReportFormatter formatter) {
+    public ReportPrinterPooledOS(ReportFormatter formatter, List<Extraction> extraction) {
         this.formatter = formatter;
+        this.extraction = extraction;
     }
 
+    @Override
     public void print() {
-        printToConsole(ASE9App.extractions);
-        printToFile(ASE9App.extractions);
+        printToConsole(extraction);
+        printToFile(extraction);
     }
 
     private void printToConsole(List<Extraction> extractions) {
-        System.out.println("*** " + extractions.get(0).getAlias() + " {" + extractions.get(0).getServerIP() + ") ***\n");
+        System.out.println("*** " + extractions.get(0).getAlias() + " (" + extractions.get(0).getServerIP() + ") ***\n");
         System.out.println(formatter.format(new String[]{"Thread Pool", "User Busy (OS)", "System Busy (OS)", "Total Busy (OS)"}));
         System.out.println(formatter.format(new String[]{"-----------", "--------------", "----------------", "---------------"}));
         for (Extraction report : extractions) {
-            if (report instanceof PerformanceExtraction) {
+            if (report instanceof PerformanceExtractionPooled) {
                 String formattedRow = formatter.format(new String[]{report.getThreadPool(),
-                        ((PerformanceExtraction) report).getUserBusyOS() + "%", ((PerformanceExtraction) report).getSystemBusyOS() + "%",
-                        computeBusy(((PerformanceExtraction) report).getIdleOS()) + "%"});
+                        ((PerformanceExtractionPooled) report).getUserBusyOS() + "%", ((PerformanceExtractionPooled) report).getSystemBusyOS() + "%",
+                        computeBusy(((PerformanceExtractionPooled) report).getIdleOS()) + "%"});
                 System.out.println(formattedRow);
             }
         }
+        System.out.println();
+        System.out.println();
     }
 
     private void printToFile(List<Extraction> extractions) {
         try (Writer out = new FileWriter(new java.io.File(ASE9App.getJarFileName() + ".txt"))) {
-            out.write("*** " + extractions.get(0).getAlias() + " {" + extractions.get(0).getServerIP() + ") ***");
+            out.write("*** " + extractions.get(0).getAlias() + " (" + extractions.get(0).getServerIP() + ") ***");
             out.write(System.getProperty("line.separator"));
             out.write(System.getProperty("line.separator"));
             out.write(formatter.format(new String[]{"Thread Pool", "User Busy (OS)", "System Busy (OS)", "Total Busy (OS)"}));
             out.write(System.getProperty("line.separator"));
             out.write(formatter.format(new String[]{"-----------", "--------------", "----------------", "---------------"}));
             for (Extraction report : extractions) {
-                if (report instanceof PerformanceExtraction) {
+                if (report instanceof PerformanceExtractionPooled) {
                     out.write(System.getProperty("line.separator"));
                     String formattedRow = formatter.format(new String[]{report.getThreadPool(),
-                            ((PerformanceExtraction) report).getUserBusyOS() + "%", ((PerformanceExtraction) report).getSystemBusyOS() + "%",
-                            computeBusy(((PerformanceExtraction) report).getIdleOS()) + "%"});
+                            ((PerformanceExtractionPooled) report).getUserBusyOS() + "%", ((PerformanceExtractionPooled) report).getSystemBusyOS() + "%",
+                            computeBusy(((PerformanceExtractionPooled) report).getIdleOS()) + "%"});
                     out.write(formattedRow);
                 }
             }
+            out.write(System.getProperty("line.separator"));
+            out.write(System.getProperty("line.separator"));
         } catch (Exception e) {
             throw new AppException(e);
         }

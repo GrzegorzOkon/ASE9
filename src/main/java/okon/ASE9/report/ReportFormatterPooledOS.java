@@ -1,6 +1,6 @@
-package okon.ASE9.raport;
+package okon.ASE9.report;
 
-public class ReportFormatterOS extends ReportFormatter {
+public class ReportFormatterPooledOS extends ReportFormatter {
     private final StringBuilder format = new StringBuilder("%-19s" + "%14s" + "%18s" + "%18s");
 
     /*public ReportFormatter(boolean threadPoolColumn) {

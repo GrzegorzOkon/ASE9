@@ -1,11 +1,11 @@
 package okon.ASE9;
 
 import static org.junit.Assert.*;
-import okon.ASE9.raport.ReportFormatterTickOS;
+import okon.ASE9.report.ReportFormatterPooledTickOS;
 import org.junit.Test;
 
 public class ReportFormatterTickOSTest {
-    ReportFormatterTickOS formatter = new ReportFormatterTickOS();
+    ReportFormatterPooledTickOS formatter = new ReportFormatterPooledTickOS();
 
     @Test
     public void shouldSayThatRowsAreEqual() {

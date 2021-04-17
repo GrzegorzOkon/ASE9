@@ -1,5 +1,7 @@
 package okon.ASE9;
 
+import okon.ASE9.service.Extraction;
+
 import java.util.List;
 
 import static okon.ASE9.ASE9App.jobs;
@@ -18,8 +20,7 @@ public class JobConsumentThread extends Thread {
             if (job != null) {
                 List<Extraction> messageList = JobExecutor.getMessages(job);
                 synchronized (extractions) {
-                    for (Extraction message : messageList)
-                        extractions.add(message);
+                    extractions.add(messageList);
                 }
             }
         }

@@ -1,4 +1,4 @@
-package okon.ASE9;
+package okon.ASE9.config;
 
 import java.util.List;
 

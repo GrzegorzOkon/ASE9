@@ -1,8 +1,6 @@
 package okon.ASE9.service;
 
-import okon.ASE9.PerformanceExtraction;
-import okon.ASE9.Extraction;
-import okon.ASE9.Server;
+import okon.ASE9.config.Server;
 import okon.ASE9.db.GatewayToSybase;
 import okon.ASE9.exception.AppException;
 
@@ -13,10 +11,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StandardPerformanceService extends PerformanceService {
+public class PerformanceServiceStandard extends PerformanceService {
     private GatewayToSybase db;
 
-    public StandardPerformanceService(GatewayToSybase db) {
+    public PerformanceServiceStandard(GatewayToSybase db) {
         this.db = db;
     }
 
@@ -47,7 +45,7 @@ public class StandardPerformanceService extends PerformanceService {
     }
 
     public Extraction extractEngineUsage(String readableSystemRaport) {
-        PerformanceExtraction result = new PerformanceExtraction();
+        PerformanceExtractionStandard result = new PerformanceExtractionStandard();
         Pattern pattern = Pattern.compile("Average\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%");
         Matcher matcher = pattern.matcher(readableSystemRaport);
         matcher.find();

@@ -1,8 +1,6 @@
 package okon.ASE9.config;
 
-import okon.ASE9.Setting;
 import okon.ASE9.exception.AppException;
-import okon.ASE9.Server;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

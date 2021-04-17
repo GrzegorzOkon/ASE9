@@ -1,7 +1,6 @@
 package okon.ASE9.service;
 
-import okon.ASE9.Extraction;
-import okon.ASE9.Server;
+import okon.ASE9.config.Server;
 
 import java.util.List;
 

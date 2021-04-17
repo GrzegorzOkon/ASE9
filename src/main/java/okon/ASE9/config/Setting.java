@@ -1,4 +1,4 @@
-package okon.ASE9;
+package okon.ASE9.config;
 
 public class Setting {
     private final String type;

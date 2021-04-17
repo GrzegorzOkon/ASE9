@@ -1,5 +1,8 @@
 package okon.ASE9;
 
+import okon.ASE9.config.Authorization;
+import okon.ASE9.config.Server;
+
 public class Job {
     private final Server server;
     private final Authorization authorization;

@@ -1,9 +1,6 @@
-package okon.ASE9;
+package okon.ASE9.service;
 
-public class PerformanceExtraction extends Extraction {
-    private String cpuBusy = "";
-    private String ioBusy = "";
-    private String idle = "";
+public class PerformanceExtractionPooled extends Extraction {
     private String userBusyTick = "";
     private String systemBusyTick = "";
     private String ioBusyTick = "";
@@ -12,19 +9,7 @@ public class PerformanceExtraction extends Extraction {
     private String systemBusyOS = "";
     private String idleOS = "";
 
-    public PerformanceExtraction() {}
-
-    public String getCpuBusy() { return cpuBusy; }
-
-    public void setCpuBusy(String cpuBusy) { this.cpuBusy = cpuBusy; }
-
-    public String getIoBusy() { return ioBusy; }
-
-    public void setIoBusy(String ioBusy) { this.ioBusy = ioBusy; }
-
-    public String getIdle() { return idle; }
-
-    public void setIdle(String idle) { this.idle = idle; }
+    public PerformanceExtractionPooled() {}
 
     public String getUserBusyTick() {
         return userBusyTick;

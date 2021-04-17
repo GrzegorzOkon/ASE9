@@ -4,6 +4,8 @@ import okon.ASE9.db.GatewayFactory;
 import okon.ASE9.db.GatewayToSybase;
 import okon.ASE9.exception.AppException;
 import okon.ASE9.exception.ConnectionException;
+import okon.ASE9.service.ExceptionExtraction;
+import okon.ASE9.service.Extraction;
 import okon.ASE9.service.PerformanceService;
 import okon.ASE9.service.PerformanceServiceFactory;
 

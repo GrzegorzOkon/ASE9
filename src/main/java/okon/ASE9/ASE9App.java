@@ -1,11 +1,9 @@
 package okon.ASE9;
 
-import okon.ASE9.config.AuthorizationConfigReader;
-import okon.ASE9.config.ProcedureConfigReader;
-import okon.ASE9.config.ProgramConfigReader;
-import okon.ASE9.config.ServerConfigReader;
+import okon.ASE9.config.*;
 import okon.ASE9.exception.AppException;
-import okon.ASE9.raport.Printer;
+import okon.ASE9.report.Printer;
+import okon.ASE9.service.Extraction;
 
 import java.io.File;
 import java.util.*;
@@ -13,7 +11,7 @@ import java.util.*;
 public class ASE9App {
     public static final Properties parameters;
     public static final Queue<Job> jobs = new LinkedList<>();
-    public static final List<Extraction> extractions = new ArrayList();
+    public static final List<List<Extraction>> extractions = new ArrayList();
 
     static final String CONNECTION_EXCEPTION_COMMUNICATE = "connection error to";
 

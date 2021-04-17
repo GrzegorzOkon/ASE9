@@ -1,6 +1,7 @@
 package okon.ASE9;
 
-import okon.ASE9.service.PooledPerformanceService;
+import okon.ASE9.service.PerformanceExtractionPooled;
+import okon.ASE9.service.PerformanceServicePooled;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +14,7 @@ import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PooledPerformanceServiceTest {
-    PooledPerformanceService service = new PooledPerformanceService(null);
+    PerformanceServicePooled service = new PerformanceServicePooled(null);
 
     @Mock
     private SQLWarning sqlWarningMock;
@@ -402,11 +403,11 @@ public class PooledPerformanceServiceTest {
                 "-------------------------  ------------  ------------  ----------\n" +
                 "Pool Summary      Total          68.8 %         2.2 %     429.0 %\n" +
                 "Average          13.8 %         0.4 %      85.8 %";
-        PerformanceExtraction correctReport = new PerformanceExtraction();
+        PerformanceExtractionPooled correctReport = new PerformanceExtractionPooled();
         correctReport.setUserBusyOS("13.8");
         correctReport.setSystemBusyOS("0.4");
         correctReport.setIdleOS("85.8");
-        PerformanceExtraction report = service.extractThreadUsage(pool);
+        PerformanceExtractionPooled report = service.extractThreadUsage(pool);
         assertEquals(correctReport.getUserBusyOS(), report.getUserBusyOS());
         assertEquals(correctReport.getSystemBusyOS(), report.getSystemBusyOS());
         assertEquals(correctReport.getIdleOS(), report.getIdleOS());

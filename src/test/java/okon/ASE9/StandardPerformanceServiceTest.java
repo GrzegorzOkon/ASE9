@@ -1,6 +1,8 @@
 package okon.ASE9;
 
-import okon.ASE9.service.StandardPerformanceService;
+import okon.ASE9.service.Extraction;
+import okon.ASE9.service.PerformanceExtractionStandard;
+import okon.ASE9.service.PerformanceServiceStandard;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StandardPerformanceServiceTest {
-    StandardPerformanceService service = new StandardPerformanceService(null);
+    PerformanceServiceStandard service = new PerformanceServiceStandard(null);
 
     @Mock
     private SQLWarning sqlWarningMock;
@@ -139,8 +141,8 @@ public class StandardPerformanceServiceTest {
             sqlWarningMock = sqlWarningMock.getNextWarning();
         } while (sqlWarningMock != null);
         Extraction performance = service.extractEngineUsage(warnings.toString());
-        assertEquals(correctCPUBusy, ((PerformanceExtraction)performance).getCpuBusy());
-        assertEquals(correctIOBusy, ((PerformanceExtraction)performance).getIoBusy());
-        assertEquals(correctIdle, ((PerformanceExtraction)performance).getIdle());
+        assertEquals(correctCPUBusy, ((PerformanceExtractionStandard)performance).getCpuBusy());
+        assertEquals(correctIOBusy, ((PerformanceExtractionStandard)performance).getIoBusy());
+        assertEquals(correctIdle, ((PerformanceExtractionStandard)performance).getIdle());
     }
 }
