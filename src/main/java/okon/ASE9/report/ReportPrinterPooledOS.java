@@ -1,11 +1,9 @@
 package okon.ASE9.report;
 
-import okon.ASE9.ASE9App;
 import okon.ASE9.service.PerformanceExtractionPooled;
 import okon.ASE9.service.Extraction;
 import okon.ASE9.exception.AppException;
 
-import java.io.FileWriter;
 import java.io.Writer;
 import java.text.NumberFormat;
 import java.util.List;
@@ -20,9 +18,9 @@ public class ReportPrinterPooledOS extends ReportPrinter {
     }
 
     @Override
-    public void print() {
+    public void print(List<Extraction> extraction, Writer out) {
         printToConsole(extraction);
-        printToFile(extraction);
+        printToFile(extraction, out);
     }
 
     private void printToConsole(List<Extraction> extractions) {
@@ -41,8 +39,8 @@ public class ReportPrinterPooledOS extends ReportPrinter {
         System.out.println();
     }
 
-    private void printToFile(List<Extraction> extractions) {
-        try (Writer out = new FileWriter(new java.io.File(ASE9App.getJarFileName() + ".txt"))) {
+    private void printToFile(List<Extraction> extractions, Writer out) {
+        try {
             out.write("*** " + extractions.get(0).getAlias() + " (" + extractions.get(0).getServerIP() + ") ***");
             out.write(System.getProperty("line.separator"));
             out.write(System.getProperty("line.separator"));
@@ -58,6 +56,7 @@ public class ReportPrinterPooledOS extends ReportPrinter {
                     out.write(formattedRow);
                 }
             }
+            out.write(System.getProperty("line.separator"));
             out.write(System.getProperty("line.separator"));
             out.write(System.getProperty("line.separator"));
         } catch (Exception e) {
