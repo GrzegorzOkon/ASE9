@@ -1,6 +1,6 @@
 package okon.ASE9;
 
-import okon.ASE9.service.Extraction;
+import okon.ASE9.service.DataExtraction;
 import okon.ASE9.service.PerformanceExtractionStandard;
 import okon.ASE9.service.PerformanceServiceStandard;
 import org.junit.Before;
@@ -140,7 +140,7 @@ public class StandardPerformanceServiceTest {
             warnings.append(sqlWarningMock.getMessage().trim()).append("\n");
             sqlWarningMock = sqlWarningMock.getNextWarning();
         } while (sqlWarningMock != null);
-        Extraction performance = service.extractEngineUsage(warnings.toString());
+        DataExtraction performance = service.extractEngineUsage(warnings.toString());
         assertEquals(correctCPUBusy, ((PerformanceExtractionStandard)performance).getCpuBusy());
         assertEquals(correctIOBusy, ((PerformanceExtractionStandard)performance).getIoBusy());
         assertEquals(correctIdle, ((PerformanceExtractionStandard)performance).getIdle());

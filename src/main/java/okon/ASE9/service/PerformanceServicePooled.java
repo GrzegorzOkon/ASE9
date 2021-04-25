@@ -19,8 +19,8 @@ public class PerformanceServicePooled extends PerformanceService {
     }
 
     @Override
-    public List<Extraction> reportProcessorPerformance(String time, Server server) {
-        List<Extraction> result = null;
+    public List<DataExtraction> reportProcessorPerformance(String time, Server server) {
+        List<DataExtraction> result = null;
         try {
             SQLWarning systemRaport = db.findLoadFor(time);
             String readableSystemRaport = transformToPlainText(systemRaport);
@@ -133,8 +133,8 @@ public class PerformanceServicePooled extends PerformanceService {
         return result;
     }
 
-    private List<Extraction> joinTheSamePools(List<PerformanceExtractionPooled> engines, List<PerformanceExtractionPooled> threads) {
-        List<Extraction> result = new ArrayList<>();
+    private List<DataExtraction> joinTheSamePools(List<PerformanceExtractionPooled> engines, List<PerformanceExtractionPooled> threads) {
+        List<DataExtraction> result = new ArrayList<>();
         for (PerformanceExtractionPooled engine : engines) {
             for (PerformanceExtractionPooled thread : threads) {
                 if (engine.getThreadPool().equals(thread.getThreadPool())) {
@@ -154,8 +154,8 @@ public class PerformanceServicePooled extends PerformanceService {
         return result;
     }
 
-    private void setServerProperties(List<Extraction> reports, String serverName, Server server) {
-        for(Extraction message : reports) {
+    private void setServerProperties(List<DataExtraction> reports, String serverName, Server server) {
+        for(DataExtraction message : reports) {
             message.setServerName(serverName);
             message.setAlias(server.getAlias());
             message.setServerIP(server.getIp());

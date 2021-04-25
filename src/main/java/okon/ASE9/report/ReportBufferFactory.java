@@ -1,21 +1,21 @@
 package okon.ASE9.report;
 
-import okon.ASE9.service.Extraction;
+import okon.ASE9.service.DataExtraction;
 import okon.ASE9.service.PerformanceExtractionPooled;
 import okon.ASE9.service.PerformanceExtractionStandard;
 
 import java.util.List;
 
-public class ReportPrinterFactory {
-    public ReportPrinter make(List<Extraction> extraction, String format, ReportFormatter formatter) {
+public class ReportBufferFactory {
+    public ReportBuffer make(List<DataExtraction> extraction, String format, ReportFormatter formatter) {
         if (extraction.get(0) instanceof PerformanceExtractionPooled && format.toUpperCase().equals("TICK")) {
-            return new ReportPrinterPooledTick(formatter, extraction);
+            return new ReportBufferPooledTick(formatter, extraction);
         } else if (extraction.get(0) instanceof PerformanceExtractionPooled && format.toUpperCase().equals("TICK, OS")) {
-            return new ReportPrinterPooledTickOS(formatter, extraction);
+            return new ReportBufferPooledTickOS(formatter, extraction);
         } else if (extraction.get(0) instanceof PerformanceExtractionPooled) {
-            return new ReportPrinterPooledOS(formatter, extraction);
+            return new ReportBufferPooledOS(formatter, extraction);
         } else if (extraction.get(0) instanceof PerformanceExtractionStandard) {
-            return new ReportPrinterStandardTick(formatter, extraction);
+            return new ReportBufferStandardTick(formatter, extraction);
         }
         return null;
     }

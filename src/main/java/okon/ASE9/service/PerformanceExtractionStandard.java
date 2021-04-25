@@ -1,6 +1,6 @@
 package okon.ASE9.service;
 
-public class PerformanceExtractionStandard extends Extraction {
+public class PerformanceExtractionStandard extends DataExtraction {
     private String cpuBusy = "";
     private String ioBusy = "";
     private String idle = "";

@@ -1,6 +1,6 @@
 package okon.ASE9.service;
 
-public class PerformanceExtractionPooled extends Extraction {
+public class PerformanceExtractionPooled extends DataExtraction {
     private String userBusyTick = "";
     private String systemBusyTick = "";
     private String ioBusyTick = "";

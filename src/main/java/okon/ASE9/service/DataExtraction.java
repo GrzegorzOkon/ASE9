@@ -1,6 +1,6 @@
 package okon.ASE9.service;
 
-public class Extraction {
+public class DataExtraction {
     private String alias = "";
     private String serverIP = "";
     private String serverName = "";

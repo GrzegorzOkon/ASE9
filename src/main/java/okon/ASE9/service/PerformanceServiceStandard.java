@@ -19,12 +19,12 @@ public class PerformanceServiceStandard extends PerformanceService {
     }
 
     @Override
-    public List<Extraction> reportProcessorPerformance(String time, Server server) {
-        List<Extraction> result = new ArrayList<>();
+    public List<DataExtraction> reportProcessorPerformance(String time, Server server) {
+        List<DataExtraction> result = new ArrayList<>();
         try {
             SQLWarning systemRaport = db.findLoadFor(time);
             String readableSystemRaport = transformToPlainText(systemRaport);
-            Extraction raport = extractEngineUsage(readableSystemRaport);
+            DataExtraction raport = extractEngineUsage(readableSystemRaport);
             raport.setAlias(server.getAlias());
             raport.setServerIP(server.getIp());
             raport.setServerName(extractServerName(readableSystemRaport));
@@ -44,7 +44,7 @@ public class PerformanceServiceStandard extends PerformanceService {
         return result.toString();
     }
 
-    public Extraction extractEngineUsage(String readableSystemRaport) {
+    public DataExtraction extractEngineUsage(String readableSystemRaport) {
         PerformanceExtractionStandard result = new PerformanceExtractionStandard();
         Pattern pattern = Pattern.compile("Average\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%");
         Matcher matcher = pattern.matcher(readableSystemRaport);

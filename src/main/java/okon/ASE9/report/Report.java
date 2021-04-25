@@ -1,23 +1,23 @@
 package okon.ASE9.report;
 
-import okon.ASE9.service.Extraction;
+import okon.ASE9.service.DataExtraction;
 
 import java.util.List;
 
 public class Report {
-    private final List<Extraction> extraction;
-    private final ReportPrinter customizedPrinter;
+    private final List<DataExtraction> extraction;
+    private final ReportBuffer customizedBuffer;
 
-    public Report(List<Extraction> extraction, ReportPrinter customizedPrinter) {
+    public Report(List<DataExtraction> extraction, ReportBuffer customizedPrinter) {
         this.extraction = extraction;
-        this.customizedPrinter = customizedPrinter;
+        this.customizedBuffer = customizedPrinter;
     }
 
-    public List<Extraction> getExtraction() {
+    public List<DataExtraction> getExtraction() {
         return extraction;
     }
 
-    public ReportPrinter getCustomizedPrinter() {
-        return customizedPrinter;
+    public ReportBuffer getCustomizedBuffer() {
+        return customizedBuffer;
     }
 }
