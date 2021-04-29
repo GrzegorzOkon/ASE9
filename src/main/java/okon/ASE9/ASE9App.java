@@ -4,8 +4,11 @@ import okon.ASE9.config.*;
 import okon.ASE9.exception.AppException;
 import okon.ASE9.report.ReportManager;
 import okon.ASE9.service.DataExtraction;
+import org.apache.commons.cli.*;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 public class ASE9App {
@@ -53,8 +56,48 @@ public class ASE9App {
     }
 
     public static void main(String[] args) {
-        startThreadPool();
-        print();
+        CommandLine cmd = parseArguments(args);
+        if (isVersionRequired(cmd)) {
+            System.out.println(Version.getVersionInfo());
+        } else {
+            startThreadPool();
+            print();
+        }
+    }
+
+    static CommandLine parseArguments(String[] args) {
+        CommandLine result = null;
+        CommandLineParser parser = new DefaultParser();
+        Options opts = new Options();
+        Option help = new Option("h", "help", false, "Display help message");
+        help.setRequired(false);
+        opts.addOption(help);
+        Option version = new Option("v", "version", false, "Display version number");
+        version.setRequired(false);
+        opts.addOption(version);
+        try {
+            result = parser.parse(opts, args);
+        } catch (ParseException e) {
+            System.out.println(getJarFileName() + ": " + e.getMessage().toLowerCase());
+            System.out.println(getUsageAsString(opts));
+            System.exit(1);
+        }
+        return result;
+    }
+
+    static String getUsageAsString(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        StringWriter out = new StringWriter();
+        PrintWriter pw = new PrintWriter(out);
+        formatter.printUsage(pw, formatter.getWidth(), getJarFileName(), options);
+        pw.flush();
+        return out.toString();
+    }
+
+    static boolean isVersionRequired(CommandLine cmd) {
+        if (cmd != null && cmd.hasOption('v'))
+            return true;
+        return false;
     }
 
     static void startThreadPool() {
