@@ -56,48 +56,68 @@ public class ASE9App {
     }
 
     public static void main(String[] args) {
-        CommandLine cmd = parseArguments(args);
-        if (isVersionRequired(cmd)) {
-            System.out.println(Version.getVersionInfo());
+        Options options = createOptions();
+        CommandLine cmd = handleArguments(args, options);
+        if (isHelpRequired(cmd)) {
+            printHelp(options);
+        } else if (isVersionRequired(cmd)) {
+            Version.printVersionInfo();
         } else {
             startThreadPool();
             print();
         }
     }
 
-    static CommandLine parseArguments(String[] args) {
-        CommandLine result = null;
-        CommandLineParser parser = new DefaultParser();
-        Options opts = new Options();
+    static Options createOptions() {
+        Options result = new Options();
         Option help = new Option("h", "help", false, "Display help message");
         help.setRequired(false);
-        opts.addOption(help);
+        result.addOption(help);
         Option version = new Option("v", "version", false, "Display version number");
         version.setRequired(false);
-        opts.addOption(version);
+        result.addOption(version);
+        return result;
+    }
+
+    static CommandLine handleArguments(String[] args, Options opts) {
+        CommandLine result = null;
+        CommandLineParser parser = new DefaultParser();
         try {
             result = parser.parse(opts, args);
         } catch (ParseException e) {
             System.out.println(getJarFileName() + ": " + e.getMessage().toLowerCase());
-            System.out.println(getUsageAsString(opts));
+            printUsage(opts);
             System.exit(1);
         }
         return result;
     }
 
-    static String getUsageAsString(Options options) {
-        HelpFormatter formatter = new HelpFormatter();
-        StringWriter out = new StringWriter();
-        PrintWriter pw = new PrintWriter(out);
-        formatter.printUsage(pw, formatter.getWidth(), getJarFileName(), options);
-        pw.flush();
-        return out.toString();
+    static boolean isHelpRequired(CommandLine cmd) {
+        if (cmd != null && cmd.hasOption('h'))
+            return true;
+        return false;
     }
 
     static boolean isVersionRequired(CommandLine cmd) {
         if (cmd != null && cmd.hasOption('v'))
             return true;
         return false;
+    }
+
+    static void printHelp(Options opts) {
+        HelpFormatter formatter = new HelpFormatter();
+        String header = "\nAn application for monitoring average databases load.\n\nFunctions:\n";
+        String footer = "\nExample: java -jar " + getJarFileName() + " -v\n\nReport bugs to: <grzegorz.programista@gmail.com>";
+        formatter.printHelp(getJarFileName(), header, opts, footer, true);
+    }
+
+    static void printUsage(Options opts) {
+        HelpFormatter formatter = new HelpFormatter();
+        StringWriter out = new StringWriter();
+        PrintWriter pw = new PrintWriter(out);
+        formatter.printUsage(pw, formatter.getWidth(), getJarFileName(), opts);
+        pw.flush();
+        System.out.println(out.toString());
     }
 
     static void startThreadPool() {
