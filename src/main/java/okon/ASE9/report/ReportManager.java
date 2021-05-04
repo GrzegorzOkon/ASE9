@@ -15,8 +15,8 @@ public class ReportManager {
     private List<Report> customizeReports() {
         List<Report> result = new ArrayList<>();
         for (List<DataExtraction> extraction : extractions) {
-            ReportFormatter customizedFormatter = new ReportFormatterFactory().make(extraction, ASE9App.parameters.getProperty("format"));
-            ReportBuffer customizedBuffer = new ReportBufferFactory().make(extraction, ASE9App.parameters.getProperty("format"), customizedFormatter);
+            ReportFormatter customizedFormatter = new ReportFormatterFactory().make(extraction, ASE9App.parameters.getProperty("ReportFormat"));
+            ReportBuffer customizedBuffer = new ReportBufferFactory().make(extraction, ASE9App.parameters.getProperty("ReportFormat"), customizedFormatter);
             result.add(new Report(extraction, customizedBuffer));
         }
         return result;

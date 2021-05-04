@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerConfigReader {
+public class HostConfigReader {
     public static ArrayList<Server> readParams(File file) {
         Element config = parseXml(file);
         ArrayList<Server> result = new ArrayList<>();

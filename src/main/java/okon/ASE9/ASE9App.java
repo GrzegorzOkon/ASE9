@@ -20,14 +20,9 @@ public class ASE9App {
 
     static {
         parameters = ProgramConfigReader.loadProperties((new File("./config/program.properties")));
-        initializeQueue();
-    }
-
-    static void initializeQueue() {
-        List<Server> servers = ServerConfigReader.readParams((new File("./config/servers.xml")));
+        List<Server> servers = HostConfigReader.readParams((new File("./config/hosts.xml")));
         List<Authorization> authorizations = AuthorizationConfigReader.readParams((new File("./config/server-auth.xml")));
-        String time = ProcedureConfigReader.readParameter(new File("./config/procedure.xml"));
-        createJobs(servers, authorizations, time);
+        createJobs(servers, authorizations, parameters.getProperty("ProcedureExecutionTime"));
     }
 
     static void createJobs(List<Server> servers, List<Authorization> authorizations, String time) {
