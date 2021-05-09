@@ -1,7 +1,7 @@
 package okon.ASE9.report;
 
-import okon.ASE9.service.PerformanceExtractionPooled;
-import okon.ASE9.service.DataExtraction;
+import okon.ASE9.messages.PerformanceExtractionPooled;
+import okon.ASE9.messages.DataExtraction;
 
 import java.text.NumberFormat;
 import java.util.List;

@@ -1,8 +1,11 @@
 package okon.ASE9.service;
 
 import okon.ASE9.config.Server;
-import okon.ASE9.db.GatewayToSybase;
+import okon.ASE9.db.Gateway;
 import okon.ASE9.exception.AppException;
+import okon.ASE9.messages.DataExtraction;
+import okon.ASE9.messages.PerformanceExtractionPooled;
+import okon.ASE9.messages.PerformanceExtractionStandard;
 
 import java.sql.SQLException;
 import java.sql.SQLWarning;
@@ -11,28 +14,33 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PerformanceServicePooled extends PerformanceService {
-    private GatewayToSybase db;
+public class SybPerformanceService extends PerformanceService {
+    private Gateway db;
 
-    public PerformanceServicePooled(GatewayToSybase db) {
+    public SybPerformanceService(Gateway db) {
         this.db = db;
     }
 
     @Override
-    public List<DataExtraction> reportProcessorPerformance(String time, Server server) {
-        List<DataExtraction> result = null;
+    public List<DataExtraction> checkServerPerformance(String time, Server server) {
+        List<DataExtraction> result = new ArrayList<>();
         try {
-            SQLWarning systemRaport = db.findLoadFor(time);
-            String readableSystemRaport = transformToPlainText(systemRaport);
-            String serverVersion = matchServerVersion(readableSystemRaport);
-            String serverName = matchServerName(readableSystemRaport);
-            if (serverVersion.contains("Cluster")) {
-                String engineUtilizationSection = substringEngineUtilizationSection(readableSystemRaport);
-                String threadUtilizationSection = substringThreadUtilizationSection(readableSystemRaport);
+            SQLWarning rawProcedureResult = db.findLoadFor(time);
+            String transformatedProcedureResult = transformToText(rawProcedureResult);
+            String serverName = extractServerName(transformatedProcedureResult);
+            if (isPooledVersion(transformatedProcedureResult)) {
+                String engineUtilizationSection = substringEngineUtilizationSection(transformatedProcedureResult);
+                String threadUtilizationSection = substringThreadUtilizationSection(transformatedProcedureResult);
                 List<PerformanceExtractionPooled> engines = checkEnginePools(engineUtilizationSection);
                 List<PerformanceExtractionPooled> threads = checkThreadPools(threadUtilizationSection);
                 result = joinTheSamePools(engines, threads);
                 setServerProperties(result, serverName, server);
+            } else {
+                DataExtraction raport = extractStandardEngineUsage(transformatedProcedureResult);
+                raport.setAlias(server.getAlias());
+                raport.setServerIP(server.getIp());
+                raport.setServerName(serverName);
+                result.add(raport);
             }
         } catch (SQLException e) {
             throw new AppException(e);
@@ -40,7 +48,7 @@ public class PerformanceServicePooled extends PerformanceService {
         return result;
     }
 
-    private String transformToPlainText(SQLWarning systemRaport) {
+    public String transformToText(SQLWarning systemRaport) {
         StringBuilder result = new StringBuilder();
         do {
             result.append(systemRaport.getMessage().trim()).append("\n");
@@ -49,29 +57,29 @@ public class PerformanceServicePooled extends PerformanceService {
         return result.toString();
     }
 
-    private String matchServerVersion(String readableSystemRaport) {
-        Pattern pattern = Pattern.compile("Server Version:\\s+(.*)\n");
-        Matcher matcher = pattern.matcher(readableSystemRaport);
-        matcher.find();
-        return matcher.group(1);
-    }
-
-    private String matchServerName(String readableSystemRaport) {
+    private String extractServerName(String procedureResult) {
         Pattern pattern = Pattern.compile("Server Name:\\s+(\\w+)\n");
-        Matcher matcher = pattern.matcher(readableSystemRaport);
+        Matcher matcher = pattern.matcher(procedureResult);
         matcher.find();
         return matcher.group(1);
     }
 
-    private String substringEngineUtilizationSection(String readableSystemRaport) {
-        return readableSystemRaport.substring(readableSystemRaport.indexOf("Engine Utilization (Tick %)"),
-                readableSystemRaport.indexOf("-------------------------  ------------  ------------  ----------  ----------\n" + "Server Summary"));
+    private boolean isPooledVersion(String procedureResult) {
+        if (procedureResult.contains("Pool")) {
+            return true;
+        }
+        return false;
     }
 
-    public String substringThreadUtilizationSection(String readableSystemRaport) {
-        return readableSystemRaport.substring(readableSystemRaport.indexOf("Thread Utilization (OS %)"),
-                readableSystemRaport.indexOf("-------------------------  ------------  ------------  ----------\n" + "Server Summary",
-                        readableSystemRaport.indexOf("-------------------------  ------------  ------------  ----------\n" + "Server Summary") + 1));
+    private String substringEngineUtilizationSection(String procedureResult) {
+        return procedureResult.substring(procedureResult.indexOf("Engine Utilization (Tick %)"),
+                procedureResult.indexOf("-------------------------  ------------  ------------  ----------  ----------\n" + "Server Summary"));
+    }
+
+    public String substringThreadUtilizationSection(String procedureResult) {
+        return procedureResult.substring(procedureResult.indexOf("Thread Utilization (OS %)"),
+                procedureResult.indexOf("-------------------------  ------------  ------------  ----------\n" + "Server Summary",
+                        procedureResult.indexOf("-------------------------  ------------  ------------  ----------\n" + "Server Summary") + 1));
     }
 
     private List<PerformanceExtractionPooled> checkEnginePools(String engineSection) {
@@ -79,7 +87,7 @@ public class PerformanceServicePooled extends PerformanceService {
         String[] enginePoolSections = engineSection.split("\n\n");
         for (int i = 0; i < enginePoolSections.length; i++) {
             if (!isEmptyPool(enginePoolSections[i])) {
-                result.add(extractEngineUsage(enginePoolSections[i]));
+                result.add(extractPooledEngineUsage(enginePoolSections[i]));
             }
         }
         return result;
@@ -90,7 +98,7 @@ public class PerformanceServicePooled extends PerformanceService {
         String[] threadPoolSections = threadSection.split("\n\n");
         for (int i = 0; i < threadPoolSections.length; i++) {
             if (!isEmptyPool(threadPoolSections[i])) {
-                result.add(extractThreadUsage(threadPoolSections[i]));
+                result.add(extractPooledThreadUsage(threadPoolSections[i]));
             }
         }
         return result;
@@ -102,7 +110,7 @@ public class PerformanceServicePooled extends PerformanceService {
         return true;
     }
 
-    private PerformanceExtractionPooled extractEngineUsage(String enginePoolSection) {
+    private PerformanceExtractionPooled extractPooledEngineUsage(String enginePoolSection) {
         PerformanceExtractionPooled result = new PerformanceExtractionPooled();
         Pattern pattern = Pattern.compile("ThreadPool :\\s(\\w+)\n");
         Matcher matcher = pattern.matcher(enginePoolSection);
@@ -118,7 +126,7 @@ public class PerformanceServicePooled extends PerformanceService {
         return result;
     }
 
-    public PerformanceExtractionPooled extractThreadUsage(String threadPoolSection) {
+    public PerformanceExtractionPooled extractPooledThreadUsage(String threadPoolSection) {
         PerformanceExtractionPooled result = new PerformanceExtractionPooled();
         Pattern pattern = Pattern.compile("ThreadPool :\\s(\\w+)\n");
         Matcher matcher = pattern.matcher(threadPoolSection);
@@ -130,6 +138,17 @@ public class PerformanceServicePooled extends PerformanceService {
         result.setUserBusyOS(matcher.group(1));
         result.setSystemBusyOS(matcher.group(2));
         result.setIdleOS(matcher.group(3));
+        return result;
+    }
+
+    public DataExtraction extractStandardEngineUsage(String procedureResult) {
+        PerformanceExtractionStandard result = new PerformanceExtractionStandard();
+        Pattern pattern = Pattern.compile("Average\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%\\s+(\\d+.\\d)\\s%");
+        Matcher matcher = pattern.matcher(procedureResult);
+        matcher.find();
+        result.setCpuBusy(matcher.group(1));
+        result.setIoBusy(matcher.group(2));
+        result.setIdle(matcher.group(3));
         return result;
     }
 

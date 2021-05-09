@@ -1,7 +1,6 @@
 package okon.ASE9;
 
-import okon.ASE9.service.PerformanceExtractionPooled;
-import okon.ASE9.service.PerformanceServicePooled;
+/*import okon.ASE9.messages.PerformanceExtractionPooled;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -412,4 +411,4 @@ public class PooledPerformanceServiceTest {
         assertEquals(correctReport.getSystemBusyOS(), report.getSystemBusyOS());
         assertEquals(correctReport.getIdleOS(), report.getIdleOS());
     }
-}
+}*/

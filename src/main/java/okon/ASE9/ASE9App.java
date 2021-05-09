@@ -3,7 +3,7 @@ package okon.ASE9;
 import okon.ASE9.config.*;
 import okon.ASE9.exception.AppException;
 import okon.ASE9.report.ReportManager;
-import okon.ASE9.service.DataExtraction;
+import okon.ASE9.messages.DataExtraction;
 import org.apache.commons.cli.*;
 
 import java.io.File;

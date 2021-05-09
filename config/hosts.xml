@@ -4,14 +4,12 @@
         <db_alias>aaa</db_alias>
         <db_ip>1.2.3.4</db_ip>
         <db_port>1234</db_port>
-        <db_setting type = "processor pool">yes</db_setting>
         <auth_interface>db-user-auth</auth_interface>
     </server>
     <server>
         <db_alias>bbb</db_alias>
         <db_ip>4.3.2.1</db_ip>
         <db_port>4321</db_port>
-        <db_setting type = "processor pool">no</db_setting>
         <auth_interface>db-user-auth</auth_interface>
     </server>
 </servers>

@@ -26,14 +26,8 @@ public class HostConfigReader {
                     String databaseIp = element.getElementsByTagName("db_ip").item(0).getTextContent();
                     Integer databasePort = element.getElementsByTagName("db_port").item(0).getTextContent().equals("") ? null :
                             Integer.valueOf(element.getElementsByTagName("db_port").item(0).getTextContent());
-                    List<Setting> settings = new ArrayList<>();
-                    for (int j = 0, size = element.getElementsByTagName("db_setting").getLength(); j < size; j++) {
-                        String type = element.getElementsByTagName("db_setting").item(j).getAttributes().item(0).getNodeValue();
-                        String value = element.getElementsByTagName("db_setting").item(j).getTextContent();
-                        settings.add(new Setting(type, value));
-                    }
                     String authorizationInterface = element.getElementsByTagName("auth_interface").item(0).getTextContent();
-                    result.add(new Server(databaseAlias, databaseIp, databasePort, settings, authorizationInterface));
+                    result.add(new Server(databaseAlias, databaseIp, databasePort, authorizationInterface));
                 }
             }
         }

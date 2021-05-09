@@ -1,6 +1,6 @@
 package okon.ASE9;
 
-import okon.ASE9.service.DataExtraction;
+import okon.ASE9.messages.DataExtraction;
 
 import java.util.List;
 

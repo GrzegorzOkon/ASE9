@@ -1,7 +1,7 @@
 package okon.ASE9.report;
 
 import okon.ASE9.ASE9App;
-import okon.ASE9.service.DataExtraction;
+import okon.ASE9.messages.DataExtraction;
 
 import java.util.ArrayList;
 import java.util.List;

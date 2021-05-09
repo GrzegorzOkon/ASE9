@@ -1,8 +1,8 @@
 package okon.ASE9.report;
 
-import okon.ASE9.service.DataExtraction;
-import okon.ASE9.service.PerformanceExtractionPooled;
-import okon.ASE9.service.PerformanceExtractionStandard;
+import okon.ASE9.messages.DataExtraction;
+import okon.ASE9.messages.PerformanceExtractionPooled;
+import okon.ASE9.messages.PerformanceExtractionStandard;
 
 import java.util.List;
 

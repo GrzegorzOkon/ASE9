@@ -1,4 +1,4 @@
-package okon.ASE9.service;
+package okon.ASE9.messages;
 
 public class PerformanceExtractionStandard extends DataExtraction {
     private String cpuBusy = "";

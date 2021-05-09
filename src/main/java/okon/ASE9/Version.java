@@ -4,8 +4,8 @@ public class Version {
     private static String name = ASE9App.getJarFileName();
     private static int major = 1;
     private static int minor = 0;
-    private static int realase = 1;
-    private static String revision = "03 May 2021";
+    private static int realase = 2;
+    private static String revision = "05 May 2021";
     private static String author = "Grzegorz Okon";
     private static String license = "GPLv2. This is free software.";
 

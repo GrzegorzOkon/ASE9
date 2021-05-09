@@ -6,10 +6,9 @@ import okon.ASE9.exception.AppException;
 import okon.ASE9.exception.ConnectionException;
 
 import javax.sql.DataSource;
-import java.io.Closeable;
 import java.sql.*;
 
-public class GatewayToSybase implements Closeable {
+public class GatewayToSybase extends Gateway {
     private static final String sysmonStatement = "sp_sysmon ?, kernel";
     private Connection db;
 
@@ -22,6 +21,7 @@ public class GatewayToSybase implements Closeable {
         }
     }
 
+    @Override
     public SQLWarning findLoadFor(String time) throws SQLException {
         PreparedStatement stmt = db.prepareStatement(sysmonStatement);
         stmt.setString(1, time);
