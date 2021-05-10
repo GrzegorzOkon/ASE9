@@ -4,17 +4,16 @@ import okon.ASE9.messages.DataExtraction;
 
 import java.util.List;
 
-import static okon.ASE9.ASE9App.jobs;
-import static okon.ASE9.ASE9App.extractions;
+import static okon.ASE9.App.extractions;
 
 public class JobConsumentThread extends Thread {
     @Override
     public void run() {
-        while (!jobs.isEmpty()) {
+        while (!WorkingObjects.jobs.isEmpty()) {
             Job job = null;
-            synchronized (jobs) {
-                if (!jobs.isEmpty()) {
-                    job = jobs.poll();
+            synchronized (WorkingObjects.jobs) {
+                if (!WorkingObjects.jobs.isEmpty()) {
+                    job = WorkingObjects.jobs.poll();
                 }
             }
             if (job != null) {

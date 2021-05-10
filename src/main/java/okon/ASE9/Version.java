@@ -1,7 +1,7 @@
 package okon.ASE9;
 
 public class Version {
-    private static String name = ASE9App.getJarFileName();
+    private static String name = WorkingEnvironment.getApplicationName();
     private static int major = 1;
     private static int minor = 0;
     private static int realase = 2;

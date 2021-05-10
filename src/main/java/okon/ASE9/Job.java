@@ -1,28 +1,36 @@
 package okon.ASE9;
 
-import okon.ASE9.config.Authorization;
-import okon.ASE9.config.Server;
-
 public class Job {
-    private final Server server;
-    private final Authorization authorization;
-    private final String time;
+    private final String ip;
+    private final int port;
+    private final String login;
+    private final String passsword;
+    private final String alias = "--not set yet--";
 
-    public Job(Server server, Authorization authorization, String time) {
-        this.server = server;
-        this.authorization = authorization;
-        this.time = time;
+    public Job(String ip, int port, String login, String passsword) {
+        this.ip = ip;
+        this.port = port;
+        this.login = login;
+        this.passsword = passsword;
     }
 
-    public Server getServer() {
-        return server;
+    public String getIp() {
+        return ip;
     }
 
-    public Authorization getAuthorization() {
-        return authorization;
+    public int getPort() {
+        return port;
     }
 
-    public String getTime() {
-        return time;
+    public String getLogin() {
+        return login;
+    }
+
+    public String getPasssword() {
+        return passsword;
+    }
+
+    public String getAlias() {
+        return alias;
     }
 }

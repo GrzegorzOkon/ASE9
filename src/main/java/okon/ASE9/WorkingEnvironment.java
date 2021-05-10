@@ -1,0 +1,46 @@
+package okon.ASE9;
+
+import java.util.Properties;
+
+public class WorkingEnvironment {
+    private static Properties environment = new Properties();
+
+    public static void setEnvironment(Properties parameters) {
+        for (String key : parameters.stringPropertyNames()) {
+            if (!key.contains("Server")) {
+                if (key.contains("ProcedureExecutionTime")) {
+                    environment.setProperty(key, formatProcedureExecutionTime(parameters.getProperty(key)));
+                } else {
+                    environment.setProperty(key, parameters.getProperty(key));
+                }
+            }
+        }
+        environment.setProperty("ApplicationName", getJarFileName());
+    }
+
+    private static String formatProcedureExecutionTime(String seconds) {
+        int hrs = Integer.valueOf(seconds) / 3600;
+        int min = (Integer.valueOf(seconds) - hrs) / 60;
+        int sec = Integer.valueOf(seconds) % 60;
+        return String.format("%02d", hrs) + ":" + String.format("%02d", min) + ":" + String.format("%02d", sec);
+    }
+
+    private static String getJarFileName() {
+        String path = App.class.getResource(App.class.getSimpleName() + ".class").getFile();
+        path = path.substring(0, path.lastIndexOf('!'));
+        path = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf('.'));
+        return path;
+    }
+
+    public static String getReportFormat() {
+        return environment.getProperty("ReportFormat", "os");
+    }
+
+    public static String getProcedureExecutionTime() {
+        return environment.getProperty("ProcedureExecutionTime", "00:00:10");
+    }
+
+    public static String getApplicationName() {
+        return environment.getProperty("ApplicationName");
+    }
+}

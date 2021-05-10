@@ -1,6 +1,6 @@
 package okon.ASE9.service;
 
-import okon.ASE9.config.Server;
+import okon.ASE9.WorkingEnvironment;
 import okon.ASE9.db.Gateway;
 import okon.ASE9.exception.AppException;
 import okon.ASE9.messages.DataExtraction;
@@ -22,10 +22,10 @@ public class SybPerformanceService extends PerformanceService {
     }
 
     @Override
-    public List<DataExtraction> checkServerPerformance(String time, Server server) {
+    public List<DataExtraction> checkServerPerformance(String alias, String ip) {
         List<DataExtraction> result = new ArrayList<>();
         try {
-            SQLWarning rawProcedureResult = db.findLoadFor(time);
+            SQLWarning rawProcedureResult = db.findLoadFor(WorkingEnvironment.getProcedureExecutionTime());
             String transformatedProcedureResult = transformToText(rawProcedureResult);
             String serverName = extractServerName(transformatedProcedureResult);
             if (isPooledVersion(transformatedProcedureResult)) {
@@ -34,11 +34,11 @@ public class SybPerformanceService extends PerformanceService {
                 List<PerformanceExtractionPooled> engines = checkEnginePools(engineUtilizationSection);
                 List<PerformanceExtractionPooled> threads = checkThreadPools(threadUtilizationSection);
                 result = joinTheSamePools(engines, threads);
-                setServerProperties(result, serverName, server);
+                setServerProperties(result, serverName, alias, ip);
             } else {
                 DataExtraction raport = extractStandardEngineUsage(transformatedProcedureResult);
-                raport.setAlias(server.getAlias());
-                raport.setServerIP(server.getIp());
+                raport.setAlias(alias);
+                raport.setServerIP(ip);
                 raport.setServerName(serverName);
                 result.add(raport);
             }
@@ -173,11 +173,11 @@ public class SybPerformanceService extends PerformanceService {
         return result;
     }
 
-    private void setServerProperties(List<DataExtraction> reports, String serverName, Server server) {
+    private void setServerProperties(List<DataExtraction> reports, String serverName, String alias, String ip) {
         for(DataExtraction message : reports) {
             message.setServerName(serverName);
-            message.setAlias(server.getAlias());
-            message.setServerIP(server.getIp());
+            message.setAlias(alias);
+            message.setServerIP(ip);
         }
     }
 }

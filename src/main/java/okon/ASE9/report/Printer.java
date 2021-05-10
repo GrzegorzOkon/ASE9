@@ -1,6 +1,7 @@
 package okon.ASE9.report;
 
-import okon.ASE9.ASE9App;
+import okon.ASE9.App;
+import okon.ASE9.WorkingEnvironment;
 import okon.ASE9.exception.AppException;
 
 import java.io.FileWriter;
@@ -17,7 +18,7 @@ public class Printer {
     }
 
     private void printToFile(String fullReport) {
-        try (Writer out = new FileWriter(new java.io.File(ASE9App.getJarFileName() + ".txt"))) {
+        try (Writer out = new FileWriter(new java.io.File(WorkingEnvironment.getApplicationName() + ".txt"))) {
             out.write(fullReport);
         } catch (Exception e) {
             throw new AppException(e);

@@ -1,11 +1,11 @@
 package okon.ASE9.report;
 
-import okon.ASE9.ASE9App;
+import okon.ASE9.WorkingEnvironment;
 import okon.ASE9.messages.DataExtraction;
 
 import java.util.ArrayList;
 import java.util.List;
-import static okon.ASE9.ASE9App.extractions;
+import static okon.ASE9.App.extractions;
 
 public class ReportManager {
     public void print() {
@@ -15,8 +15,8 @@ public class ReportManager {
     private List<Report> customizeReports() {
         List<Report> result = new ArrayList<>();
         for (List<DataExtraction> extraction : extractions) {
-            ReportFormatter customizedFormatter = new ReportFormatterFactory().make(extraction, ASE9App.parameters.getProperty("ReportFormat"));
-            ReportBuffer customizedBuffer = new ReportBufferFactory().make(extraction, ASE9App.parameters.getProperty("ReportFormat"), customizedFormatter);
+            ReportFormatter customizedFormatter = new ReportFormatterFactory().make(extraction, WorkingEnvironment.getReportFormat());
+            ReportBuffer customizedBuffer = new ReportBufferFactory().make(extraction, WorkingEnvironment.getReportFormat(), customizedFormatter);
             result.add(new Report(extraction, customizedBuffer));
         }
         return result;

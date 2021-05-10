@@ -4,6 +4,8 @@ import okon.ASE9.exception.ConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ProgramConfigReader {
     public static Properties loadProperties(File file) {
@@ -18,29 +20,43 @@ public class ProgramConfigReader {
     }
 
     static void validate(Properties properties) {
-        validateProcedureExecutionTime(properties);
         validateReportFormat(properties);
-    }
-
-    static void validateProcedureExecutionTime(Properties properties) {
-        if (isKeyAbsent(properties, "ProcedureExecutionTime") || isWrongFormat(properties, "ProcedureExecutionTime") ||
-                isOutOfRange(properties, "ProcedureExecutionTime")) {
-            setDefaultProcedureExecutionTime(properties);
-        } else {
-            setRightProcedureExecutionTimeFormat(properties);
-        }
+        validateServer(properties);
+        validateProcedureExecutionTime(properties);
     }
 
     static void validateReportFormat(Properties properties) {
-        if (isKeyAbsent(properties, "ReportFormat") || isWrongValue(properties, "ReportFormat")) {
-            setDefaultReportFormat(properties);
+        if (properties.containsKey("ReportFormat") && isWrongValue(properties, "ReportFormat")) {
+            properties.remove("ReportFormat");
         }
     }
 
-    static boolean isKeyAbsent(Properties properties, String key) {
+    static void validateServer(Properties properties) {
+        if (properties.containsKey("Server")) {
+            String validatedServers = "";
+            for (String server : properties.getProperty("Server").split(";")) {
+                if (isIPAbsent(server) || isPortAbsent(server) || isLoginAbsent(server) || isPasswordAbsent(server) ||
+                        isIPWrongFormat(server) || isPortWrongFormat(server) || isLoginWrongFormat(server)) {
+                    break;
+                } else {
+                    validatedServers = validatedServers + server + ";";
+                }
+            }
+            properties.setProperty("Server", validatedServers);
+        }
+    }
+
+    static void validateProcedureExecutionTime(Properties properties) {
+        if (properties.containsKey("ProcedureExecutionTime") && (isWrongFormat(properties, "ProcedureExecutionTime") ||
+                isOutOfRange(properties, "ProcedureExecutionTime"))) {
+            properties.remove("ProcedureExecutionTime");
+        }
+    }
+
+    /*public static boolean isKeyPresent(Properties properties, String key) {
         if (properties.containsKey(key)) return false;
         return true;
-    }
+    }*/
 
     static boolean isWrongFormat(Properties properties, String key) {
         try {
@@ -49,6 +65,53 @@ public class ProgramConfigReader {
             return true;
         }
         return false;
+    }
+
+    public static boolean isIPAbsent(String server) {
+        if (server.contains(":") && server.substring(0, server.indexOf(':')).length() > 0) return false;
+        return true;
+    }
+
+    public static boolean isPortAbsent(String server) {
+        if (server.contains(":") && server.contains("[") && server.substring(server.indexOf(":") + 1, server.indexOf("[")).length() > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isLoginAbsent(String server) {
+        if (server.contains("[") && server.contains(",") && server.substring(server.indexOf("[") + 1, server.indexOf(",")).length() > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isPasswordAbsent(String server) {
+        if (server.contains(",") && server.contains("]") && server.substring(server.indexOf(",") + 1, server.indexOf("]")).length() > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isIPWrongFormat(String server) {
+        Pattern pattern = Pattern.compile("\\d+\\.\\d+\\.\\d+\\.\\d+");
+        Matcher matcher = pattern.matcher(server.substring(0, server.indexOf(':')));
+        if (matcher.find()) return false;
+        return true;
+    }
+
+    public static boolean isPortWrongFormat(String server) {
+        Pattern pattern = Pattern.compile("^\\d+$");
+        Matcher matcher = pattern.matcher(server.substring(server.indexOf(":") + 1, server.indexOf("[")));
+        if (matcher.find()) return false;
+        return true;
+    }
+
+    public static boolean isLoginWrongFormat(String server) {
+        Pattern pattern = Pattern.compile("^\\D\\w+$");
+        Matcher matcher = pattern.matcher(server.substring(server.indexOf("[") + 1, server.indexOf(",")));
+        if (matcher.find()) return false;
+        return true;
     }
 
     static boolean isOutOfRange(Properties properties, String key) {
@@ -63,19 +126,11 @@ public class ProgramConfigReader {
         return true;
     }
 
-    static void setDefaultProcedureExecutionTime(Properties properties) {
+    /*static void setDefaultProcedureExecutionTime(Properties properties) {
         properties.setProperty("ProcedureExecutionTime", "00:00:10");
-    }
+    }*/
 
-    static void setDefaultReportFormat(Properties properties) {
+    /*static void setDefaultReportFormat(Properties properties) {
         properties.setProperty("ReportFormat", "os");
-    }
-
-    static void setRightProcedureExecutionTimeFormat(Properties properties) {
-        int hours = Integer.valueOf(Integer.valueOf(properties.getProperty("ProcedureExecutionTime")) / 3600);
-        int minutes = (Integer.valueOf(properties.getProperty("ProcedureExecutionTime")) - hours) / 60;
-        int seconds = Integer.valueOf(properties.getProperty("ProcedureExecutionTime")) % 60;
-        properties.setProperty("ProcedureExecutionTime", String.format("%02d", hours) + ":"
-                + String.format("%02d", minutes) + ":" + String.format("%02d", seconds));
-    }
+    }*/
 }

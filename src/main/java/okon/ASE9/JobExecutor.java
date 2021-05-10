@@ -17,11 +17,11 @@ public class JobExecutor {
         List<DataExtraction> result = new ArrayList<>();
         try (Gateway db = GatewayFactory.make(job)) {
             PerformanceService service = PerformanceServiceFactory.make(db);
-            result = service.checkServerPerformance(job.getTime(), job.getServer());
+            result = service.checkServerPerformance(job.getAlias(), job.getIp());
         } catch (ConnectionException e) {
             DataExtraction report = new ExceptionDataExtraction();
-            report.setAlias(job.getServer().getAlias());
-            report.setServerIP(job.getServer().getIp());
+            report.setAlias(job.getAlias());
+            report.setServerIP(job.getIp());
             result.add(report);
         } catch (Exception e) {
             throw new AppException(e);

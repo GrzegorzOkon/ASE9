@@ -14,8 +14,7 @@ public class GatewayToSybase extends Gateway {
 
     public GatewayToSybase(Job job) {
         try {
-            db = createDataSource(job.getServer().getIp(), job.getServer().getPort(), job.getAuthorization().getUsername(),
-                    job.getAuthorization().getPassword()).getConnection();
+            db = createDataSource(job.getIp(), job.getPort(), job.getLogin(), job.getPasssword()).getConnection();
         } catch (SQLException e) {
             throw new ConnectionException(e);
         }

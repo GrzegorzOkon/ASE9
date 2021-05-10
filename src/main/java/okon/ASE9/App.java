@@ -11,43 +11,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
-public class ASE9App {
-    public static final Properties parameters;
-    public static final Queue<Job> jobs = new LinkedList<>();
+public class App {
     public static final List<List<DataExtraction>> extractions = new ArrayList();
 
     static final String CONNECTION_EXCEPTION_COMMUNICATE = "connection error to";
 
     static {
-        parameters = ProgramConfigReader.loadProperties((new File("./config/program.properties")));
-        List<Server> servers = HostConfigReader.readParams((new File("./config/hosts.xml")));
-        List<Authorization> authorizations = AuthorizationConfigReader.readParams((new File("./config/server-auth.xml")));
-        createJobs(servers, authorizations, parameters.getProperty("ProcedureExecutionTime"));
-    }
-
-    static void createJobs(List<Server> servers, List<Authorization> authorizations, String time) {
-        for (Server server : servers) {
-            Job job = new Job(server, matchAuthorizationToServer(server, authorizations), time);
-            jobs.add(job);
-        }
-    }
-
-    static Authorization matchAuthorizationToServer(Server server, List<Authorization> authorizations) {
-        if (isAuthorizationPresent(server)) {
-            for (Authorization authorization : authorizations) {
-                if (server.getAuthorizationInterface().equals(authorization.getAuthorizationInterface())) {
-                    return authorization;
-                }
-            }
-        }
-        return null;
-    }
-
-    static boolean isAuthorizationPresent(Server server) {
-        if (!server.getAuthorizationInterface().equals("")) {
-            return true;
-        }
-        return false;
+        Properties properties = ProgramConfigReader.loadProperties((new File("./config/program.properties")));
+        WorkingEnvironment.setEnvironment(properties);
+        WorkingObjects.setJobs(properties);
     }
 
     public static void main(String[] args) {
@@ -80,7 +52,7 @@ public class ASE9App {
         try {
             result = parser.parse(opts, args);
         } catch (ParseException e) {
-            System.out.println(getJarFileName() + ": " + e.getMessage().toLowerCase());
+            System.out.println(WorkingEnvironment.getApplicationName() + ": " + e.getMessage().toLowerCase());
             printUsage(opts);
             System.exit(1);
         }
@@ -102,21 +74,21 @@ public class ASE9App {
     static void printHelp(Options opts) {
         HelpFormatter formatter = new HelpFormatter();
         String header = "\nAn application for monitoring average databases load.\n\nFunctions:\n";
-        String footer = "\nExample: java -jar " + getJarFileName() + " -v\n\nReport bugs to: <grzegorz.programista@gmail.com>";
-        formatter.printHelp(getJarFileName(), header, opts, footer, true);
+        String footer = "\nExample: java -jar " + WorkingEnvironment.getApplicationName() + " -v\n\nReport bugs to: <grzegorz.programista@gmail.com>";
+        formatter.printHelp(WorkingEnvironment.getApplicationName(), header, opts, footer, true);
     }
 
     static void printUsage(Options opts) {
         HelpFormatter formatter = new HelpFormatter();
         StringWriter out = new StringWriter();
         PrintWriter pw = new PrintWriter(out);
-        formatter.printUsage(pw, formatter.getWidth(), getJarFileName(), opts);
+        formatter.printUsage(pw, formatter.getWidth(), WorkingEnvironment.getApplicationName(), opts);
         pw.flush();
         System.out.println(out.toString());
     }
 
     static void startThreadPool() {
-        int threadSum = jobs.size();
+        int threadSum = WorkingObjects.jobs.size();
         Thread[] threads = new Thread[threadSum];
         for (int i = 0; i < threadSum; i++) {
             threads[i] = new JobConsumentThread();
@@ -238,12 +210,5 @@ public class ASE9App {
 
     private static void print() {
         new ReportManager().print();
-    }
-
-    public static String getJarFileName() {
-        String path = ASE9App.class.getResource(ASE9App.class.getSimpleName() + ".class").getFile();
-        path = path.substring(0, path.lastIndexOf('!'));
-        path = path.substring(path.lastIndexOf("/") + 1, path.lastIndexOf('.'));
-        return path;
     }
 }
