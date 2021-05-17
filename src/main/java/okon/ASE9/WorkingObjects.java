@@ -1,5 +1,8 @@
 package okon.ASE9;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;
@@ -8,12 +11,13 @@ public class WorkingObjects {
     public static final Queue<Job> jobs = new LinkedList<>();
 
     public static void setJobs(Properties parameters) {
-        if (parameters.contains("Server") && !parameters.getProperty("Server").equals("")) {
-            for (String server : parameters.getProperty("Server").split(";")) {
-                String ip = substringIp(server);
-                int port = Integer.valueOf(substringPort(server));
-                String login = substringLogin(server);
-                String password = substringPasssword(server);
+        if (parameters.containsKey("Server") && !parameters.getProperty("Server").equals("")) {
+            String[] servers = parameters.getProperty("Server").split(";");
+            for (int iter = 0; iter < servers.length; iter++) {
+                String ip = substringIp(servers[iter]);
+                int port = Integer.valueOf(substringPort(servers[iter]));
+                String login = substringLogin(servers[iter]);
+                String password = substringPasssword(servers[iter]);
                 jobs.add(new Job(ip, port, login, password));
             }
         }

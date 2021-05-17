@@ -17,7 +17,7 @@ public class JobExecutor {
         List<DataExtraction> result = new ArrayList<>();
         try (Gateway db = GatewayFactory.make(job)) {
             PerformanceService service = PerformanceServiceFactory.make(db);
-            result = service.checkServerPerformance(job.getAlias(), job.getIp());
+            result = service.collectPerfstat(job.getAlias(), job.getIp());
         } catch (ConnectionException e) {
             DataExtraction report = new ExceptionDataExtraction();
             report.setAlias(job.getAlias());

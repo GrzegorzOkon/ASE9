@@ -1,5 +1,7 @@
 package okon.ASE9.config;
 import okon.ASE9.exception.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,11 +10,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ProgramConfigReader {
+    private static final Logger logger = LogManager.getLogger(ProgramConfigReader.class);
+
     public static Properties loadProperties(File file) {
         Properties result = new Properties();
         try {
             result.load(new FileInputStream(file));
             validate(result);
+            logger.info("using configuration file: " + file);
         } catch (Exception e) {
             throw new ConfigurationException(e.getMessage());
         }
@@ -53,11 +58,6 @@ public class ProgramConfigReader {
         }
     }
 
-    /*public static boolean isKeyPresent(Properties properties, String key) {
-        if (properties.containsKey(key)) return false;
-        return true;
-    }*/
-
     static boolean isWrongFormat(Properties properties, String key) {
         try {
             Integer.parseInt(properties.getProperty(key));
@@ -73,23 +73,17 @@ public class ProgramConfigReader {
     }
 
     public static boolean isPortAbsent(String server) {
-        if (server.contains(":") && server.contains("[") && server.substring(server.indexOf(":") + 1, server.indexOf("[")).length() > 0) {
-            return false;
-        }
+        if (server.contains(":") && server.contains("[") && server.substring(server.indexOf(":") + 1, server.indexOf("[")).length() > 0) return false;
         return true;
     }
 
     public static boolean isLoginAbsent(String server) {
-        if (server.contains("[") && server.contains(",") && server.substring(server.indexOf("[") + 1, server.indexOf(",")).length() > 0) {
-            return false;
-        }
+        if (server.contains("[") && server.contains(",") && server.substring(server.indexOf("[") + 1, server.indexOf(",")).length() > 0) return false;
         return true;
     }
 
     public static boolean isPasswordAbsent(String server) {
-        if (server.contains(",") && server.contains("]") && server.substring(server.indexOf(",") + 1, server.indexOf("]")).length() > 0) {
-            return false;
-        }
+        if (server.contains(",") && server.contains("]") && server.substring(server.indexOf(",") + 1, server.indexOf("]")).length() > 0) return false;
         return true;
     }
 
@@ -125,12 +119,4 @@ public class ProgramConfigReader {
                 properties.getProperty(key).toLowerCase().equals("complete")) return false;
         return true;
     }
-
-    /*static void setDefaultProcedureExecutionTime(Properties properties) {
-        properties.setProperty("ProcedureExecutionTime", "00:00:10");
-    }*/
-
-    /*static void setDefaultReportFormat(Properties properties) {
-        properties.setProperty("ReportFormat", "os");
-    }*/
 }

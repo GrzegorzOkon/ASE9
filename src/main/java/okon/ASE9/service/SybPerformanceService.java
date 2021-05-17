@@ -1,11 +1,14 @@
 package okon.ASE9.service;
 
+import okon.ASE9.App;
 import okon.ASE9.WorkingEnvironment;
 import okon.ASE9.db.Gateway;
 import okon.ASE9.exception.AppException;
 import okon.ASE9.messages.DataExtraction;
 import okon.ASE9.messages.PerformanceExtractionPooled;
 import okon.ASE9.messages.PerformanceExtractionStandard;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
 import java.sql.SQLWarning;
@@ -15,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SybPerformanceService extends PerformanceService {
+    private static final Logger logger = LogManager.getLogger(SybPerformanceService.class);
     private Gateway db;
 
     public SybPerformanceService(Gateway db) {
@@ -22,7 +26,8 @@ public class SybPerformanceService extends PerformanceService {
     }
 
     @Override
-    public List<DataExtraction> checkServerPerformance(String alias, String ip) {
+    public List<DataExtraction> collectPerfstat(String alias, String ip) {
+        logger.debug("In collectPerfstat()");
         List<DataExtraction> result = new ArrayList<>();
         try {
             SQLWarning rawProcedureResult = db.findLoadFor(WorkingEnvironment.getProcedureExecutionTime());
@@ -43,8 +48,10 @@ public class SybPerformanceService extends PerformanceService {
                 result.add(raport);
             }
         } catch (SQLException e) {
+            logger.error("Collecting performance statistics failed on host [[" + ip + "]]");
             throw new AppException(e);
         }
+        logger.debug("End of collectPerfstat()");
         return result;
     }
 

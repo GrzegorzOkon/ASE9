@@ -5,6 +5,12 @@ import okon.ASE9.exception.AppException;
 import okon.ASE9.report.ReportManager;
 import okon.ASE9.messages.DataExtraction;
 import org.apache.commons.cli.*;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.builder.api.*;
+import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -12,17 +18,28 @@ import java.io.StringWriter;
 import java.util.*;
 
 public class App {
+    private static final Logger logger = LogManager.getLogger(App.class);
     public static final List<List<DataExtraction>> extractions = new ArrayList();
 
     static final String CONNECTION_EXCEPTION_COMMUNICATE = "connection error to";
 
     static {
+        App.initLogger("app.log","%d %p %c [%t] %m%n");
         Properties properties = ProgramConfigReader.loadProperties((new File("./config/program.properties")));
+
+        logger.debug("in static");
+        for (String name : properties.stringPropertyNames()) {
+            logger.debug(name + ": " + properties.getProperty(name));
+        }
+
         WorkingEnvironment.setEnvironment(properties);
         WorkingObjects.setJobs(properties);
+        logger.debug("End of static");
     }
 
     public static void main(String[] args) {
+        //App.initLogger("app.log","%d %p %c [%t] %m%n");
+
         Options options = createOptions();
         CommandLine cmd = handleArguments(args, options);
         if (isHelpRequired(cmd)) {
@@ -33,6 +50,40 @@ public class App {
             startThreadPool();
             print();
         }
+    }
+
+    public static void initLogger(String fileName, String pattern) {
+
+        ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
+
+        //builder.setStatusLevel(Level.DEBUG);
+        //builder.setConfigurationName("DefaultLogger");
+
+        // create a console appender
+        /*AppenderComponentBuilder appenderBuilder = builder.newAppender("Console", "CONSOLE").addAttribute("target",
+                ConsoleAppender.Target.SYSTEM_OUT);
+        appenderBuilder.add(builder.newLayout("PatternLayout")
+                .addAttribute("pattern", pattern));
+        RootLoggerComponentBuilder rootLogger = builder.newRootLogger(Level.DEBUG);
+        rootLogger.add(builder.newAppenderRef("Console"));
+
+        builder.add(appenderBuilder);*/
+
+        // create a rolling file appender
+        LayoutComponentBuilder layoutBuilder = builder.newLayout("PatternLayout")
+                .addAttribute("pattern", pattern);
+        ComponentBuilder triggeringPolicy = builder.newComponent("Policies")
+                .addComponent(builder.newComponent("SizeBasedTriggeringPolicy").addAttribute("size", "10MB"));
+        AppenderComponentBuilder appenderBuilder = builder.newAppender("LogToRollingFile", "RollingFile")
+                .addAttribute("fileName", fileName)
+                .addAttribute("filePattern", fileName+"-%d{MM-dd-yy-HH-mm-ss}.log.")
+                .add(layoutBuilder)
+                .addComponent(triggeringPolicy);
+        builder.add(appenderBuilder);
+        RootLoggerComponentBuilder rootLogger = builder.newRootLogger(Level.DEBUG);
+        rootLogger.add(builder.newAppenderRef("LogToRollingFile"));
+        builder.add(rootLogger);
+        Configurator.reconfigure(builder.build());
     }
 
     static Options createOptions() {
@@ -88,7 +139,9 @@ public class App {
     }
 
     static void startThreadPool() {
+        logger.debug("In startThreadPool()");
         int threadSum = WorkingObjects.jobs.size();
+        logger.debug("Thread sum: " + threadSum);
         Thread[] threads = new Thread[threadSum];
         for (int i = 0; i < threadSum; i++) {
             threads[i] = new JobConsumentThread();
@@ -103,6 +156,7 @@ public class App {
                 throw new AppException(e);
             }
         }
+        logger.debug("End of startThreadPool()");
     }
 
     /*static void print() {

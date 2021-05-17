@@ -6,14 +6,8 @@ public class WorkingEnvironment {
     private static Properties environment = new Properties();
 
     public static void setEnvironment(Properties parameters) {
-        for (String key : parameters.stringPropertyNames()) {
-            if (!key.contains("Server")) {
-                if (key.contains("ProcedureExecutionTime")) {
-                    environment.setProperty(key, formatProcedureExecutionTime(parameters.getProperty(key)));
-                } else {
-                    environment.setProperty(key, parameters.getProperty(key));
-                }
-            }
+        if (parameters.containsKey("ProcedureExecutionTime")) {
+            environment.setProperty("ProcedureExecutionTime", formatProcedureExecutionTime(parameters.getProperty("ProcedureExecutionTime")));
         }
         environment.setProperty("ApplicationName", getJarFileName());
     }
