@@ -26,15 +26,19 @@ public class WorkingEnvironment {
         return path;
     }
 
-    public static String getReportFormat() {
-        return environment.getProperty("ReportFormat", "os");
+    public static String getApplicationName() {
+        return environment.getProperty("ApplicationName");
+    }
+
+    public static String getLogFileSize() {
+        return environment.getProperty("LogFileSize", "1");
     }
 
     public static String getProcedureExecutionTime() {
         return environment.getProperty("ProcedureExecutionTime", "00:00:10");
     }
 
-    public static String getApplicationName() {
-        return environment.getProperty("ApplicationName");
+    public static String getReportFormat() {
+        return environment.getProperty("ReportFormat", "os");
     }
 }

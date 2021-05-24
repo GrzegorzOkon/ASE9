@@ -26,20 +26,11 @@ public class App {
     static {
         App.initLogger("app.log","%d %p %c [%t] %m%n");
         Properties properties = ProgramConfigReader.loadProperties((new File("./config/program.properties")));
-
-        logger.debug("in static");
-        for (String name : properties.stringPropertyNames()) {
-            logger.debug(name + ": " + properties.getProperty(name));
-        }
-
         WorkingEnvironment.setEnvironment(properties);
         WorkingObjects.setJobs(properties);
-        logger.debug("End of static");
     }
 
     public static void main(String[] args) {
-        //App.initLogger("app.log","%d %p %c [%t] %m%n");
-
         Options options = createOptions();
         CommandLine cmd = handleArguments(args, options);
         if (isHelpRequired(cmd)) {
@@ -52,9 +43,26 @@ public class App {
         }
     }
 
-    public static void initLogger(String fileName, String pattern) {
-
+    private static void initLogger(String fileName, String pattern) {
         ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
+        LayoutComponentBuilder layoutBuilder = builder.newLayout("PatternLayout")
+                .addAttribute("pattern", pattern);
+        AppenderComponentBuilder appenderBuilder = builder.newAppender("LogToRollingFile", "RollingFile")
+                .addAttribute("fileName", fileName)
+                .addAttribute("filePattern", fileName+"-%d{MM-dd-yy-HH-mm-ss}.log.")
+                .add(layoutBuilder);
+        if (!WorkingEnvironment.getLogFileSize().equals("0")) {
+            ComponentBuilder triggeringPolicy = builder.newComponent("Policies")
+                    .addComponent(builder.newComponent("SizeBasedTriggeringPolicy")
+                            .addAttribute("size", WorkingEnvironment.getLogFileSize() + "MB"));
+            appenderBuilder.addComponent(triggeringPolicy);
+        }
+        builder.add(appenderBuilder);
+        RootLoggerComponentBuilder rootLogger = builder.newRootLogger(Level.DEBUG);
+        rootLogger.add(builder.newAppenderRef("LogToRollingFile"));
+        builder.add(rootLogger);
+        Configurator.reconfigure(builder.build());
+
 
         //builder.setStatusLevel(Level.DEBUG);
         //builder.setConfigurationName("DefaultLogger");
@@ -70,20 +78,7 @@ public class App {
         builder.add(appenderBuilder);*/
 
         // create a rolling file appender
-        LayoutComponentBuilder layoutBuilder = builder.newLayout("PatternLayout")
-                .addAttribute("pattern", pattern);
-        ComponentBuilder triggeringPolicy = builder.newComponent("Policies")
-                .addComponent(builder.newComponent("SizeBasedTriggeringPolicy").addAttribute("size", "10MB"));
-        AppenderComponentBuilder appenderBuilder = builder.newAppender("LogToRollingFile", "RollingFile")
-                .addAttribute("fileName", fileName)
-                .addAttribute("filePattern", fileName+"-%d{MM-dd-yy-HH-mm-ss}.log.")
-                .add(layoutBuilder)
-                .addComponent(triggeringPolicy);
-        builder.add(appenderBuilder);
-        RootLoggerComponentBuilder rootLogger = builder.newRootLogger(Level.DEBUG);
-        rootLogger.add(builder.newAppenderRef("LogToRollingFile"));
-        builder.add(rootLogger);
-        Configurator.reconfigure(builder.build());
+
     }
 
     static Options createOptions() {

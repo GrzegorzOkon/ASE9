@@ -25,9 +25,17 @@ public class ProgramConfigReader {
     }
 
     static void validate(Properties properties) {
+        validateLogFileSize(properties);
         validateReportFormat(properties);
         validateServer(properties);
         validateProcedureExecutionTime(properties);
+    }
+
+    static void validateLogFileSize(Properties properties) {
+        if (properties.containsKey("LogFileSize") && (isWrongFormat(properties, "LogFileSize")
+                || isOutOfRange(properties, "LogFileSize"))) {
+            properties.remove("LogFileSize");
+        }
     }
 
     static void validateReportFormat(Properties properties) {
@@ -109,8 +117,10 @@ public class ProgramConfigReader {
     }
 
     static boolean isOutOfRange(Properties properties, String key) {
-        if (Integer.valueOf(properties.getProperty("ProcedureExecutionTime")).intValue() < 1
+        if (Integer.valueOf(properties.getProperty("ProcedureExecutionTime")).intValue() < 0
                     || Integer.valueOf(properties.getProperty("ProcedureExecutionTime")).intValue() > 86400) return true;
+        if (Integer.valueOf(properties.getProperty("LogFileSize")).intValue() < 1
+                    || Integer.valueOf(properties.getProperty("LogFileSize")).intValue() > 128) return true;
         return false;
     }
 
