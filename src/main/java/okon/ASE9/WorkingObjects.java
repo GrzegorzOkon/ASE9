@@ -1,8 +1,5 @@
 package okon.ASE9;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Queue;

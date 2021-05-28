@@ -24,10 +24,12 @@ public class App {
     static final String CONNECTION_EXCEPTION_COMMUNICATE = "connection error to";
 
     static {
-        App.initLogger("app.log","%d %p %c [%t] %m%n");
         Properties properties = ProgramConfigReader.loadProperties((new File("./config/program.properties")));
         WorkingEnvironment.setEnvironment(properties);
         WorkingObjects.setJobs(properties);
+        App.initLogger("app.log","%d %p %c [%t] %m%n");
+        logger.info("Starting " + Version.getVersionInfo() + " [" + WorkingEnvironment.getHostName() + "]");
+        logger.info("using configuration file: './config/program.properties'");
     }
 
     public static void main(String[] args) {
@@ -58,7 +60,7 @@ public class App {
             appenderBuilder.addComponent(triggeringPolicy);
         }
         builder.add(appenderBuilder);
-        RootLoggerComponentBuilder rootLogger = builder.newRootLogger(Level.DEBUG);
+        RootLoggerComponentBuilder rootLogger = builder.newRootLogger(Level.values()[WorkingEnvironment.getDebugLevel()]);
         rootLogger.add(builder.newAppenderRef("LogToRollingFile"));
         builder.add(rootLogger);
         Configurator.reconfigure(builder.build());

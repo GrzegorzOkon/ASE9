@@ -1,7 +1,5 @@
 package okon.ASE9.config;
 import okon.ASE9.exception.ConfigurationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,31 +8,36 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ProgramConfigReader {
-    private static final Logger logger = LogManager.getLogger(ProgramConfigReader.class);
-
     public static Properties loadProperties(File file) {
         Properties result = new Properties();
         try {
             result.load(new FileInputStream(file));
             validate(result);
-            logger.info("using configuration file: " + file);
         } catch (Exception e) {
             throw new ConfigurationException(e.getMessage());
         }
         return result;
     }
 
-    static void validate(Properties properties) {
+    public static void validate(Properties properties) {
         validateLogFileSize(properties);
+        validateDebugLevel(properties);
         validateReportFormat(properties);
         validateServer(properties);
         validateProcedureExecutionTime(properties);
     }
 
-    static void validateLogFileSize(Properties properties) {
+    public static void validateLogFileSize(Properties properties) {
         if (properties.containsKey("LogFileSize") && (isWrongFormat(properties, "LogFileSize")
                 || isOutOfRange(properties, "LogFileSize"))) {
             properties.remove("LogFileSize");
+        }
+    }
+
+    public static void validateDebugLevel(Properties properties) {
+        if (properties.containsKey("DebugLevel") && (isWrongFormat(properties, "DebugLevel")
+                || isOutOfRange(properties, "DebugLevel"))) {
+            properties.remove("DebugLevel");
         }
     }
 
@@ -116,15 +119,27 @@ public class ProgramConfigReader {
         return true;
     }
 
-    static boolean isOutOfRange(Properties properties, String key) {
-        if (Integer.valueOf(properties.getProperty("ProcedureExecutionTime")).intValue() < 0
-                    || Integer.valueOf(properties.getProperty("ProcedureExecutionTime")).intValue() > 86400) return true;
-        if (Integer.valueOf(properties.getProperty("LogFileSize")).intValue() < 1
-                    || Integer.valueOf(properties.getProperty("LogFileSize")).intValue() > 128) return true;
+    public static boolean isOutOfRange(Properties properties, String key) {
+        if (key.equals("LogFileSize")) {
+            if (Integer.valueOf(properties.getProperty("LogFileSize")).intValue() < 1
+                    || Integer.valueOf(properties.getProperty("LogFileSize")).intValue() > 128) {
+                return true;
+            }
+        } else if (key.equals("DebugLevel")) {
+            if (Integer.valueOf(properties.getProperty("DebugLevel")).intValue() < 0
+                    || Integer.valueOf(properties.getProperty("DebugLevel")).intValue() > 5) {
+                return true;
+            }
+        } else if (key.equals("ProcedureExecutionTime")) {
+            if (Integer.valueOf(properties.getProperty("ProcedureExecutionTime")).intValue() < 0
+                    || Integer.valueOf(properties.getProperty("ProcedureExecutionTime")).intValue() > 86400) {
+                return true;
+            }
+        }
         return false;
     }
 
-    static boolean isWrongValue(Properties properties, String key) {
+    public static boolean isWrongValue(Properties properties, String key) {
         if (properties.getProperty(key).toLowerCase().equals("tick") || properties.getProperty(key).toLowerCase().equals("os") ||
                 properties.getProperty(key).toLowerCase().equals("complete")) return false;
         return true;
