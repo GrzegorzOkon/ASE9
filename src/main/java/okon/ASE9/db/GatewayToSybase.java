@@ -34,10 +34,10 @@ public class GatewayToSybase extends Gateway {
         return result;
     }
 
-    private DataSource initDataSource(String serverName, int portNumber, String user, String password){
-        logger.debug("In initDataSource()");
+    private DataSource initDataSource(String ip, int portNumber, String user, String password){
+        logger.debug("In initDataSource() server:'" + ip + "' port:" + portNumber);
         SybDataSource dataSource = new SybDataSource();
-        dataSource.setServerName(serverName);
+        dataSource.setServerName(ip);
         dataSource.setPortNumber(portNumber);
         dataSource.setUser(user);
         dataSource.setPassword(password);

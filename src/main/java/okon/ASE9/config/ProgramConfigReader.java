@@ -3,6 +3,10 @@ import okon.ASE9.exception.ConfigurationException;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,6 +24,7 @@ public class ProgramConfigReader {
     }
 
     public static void validate(Properties properties) {
+        validateLogFile(properties);
         validateLogFileSize(properties);
         validateDebugLevel(properties);
         validateReportFormat(properties);
@@ -27,23 +32,30 @@ public class ProgramConfigReader {
         validateProcedureExecutionTime(properties);
     }
 
+    public static void validateLogFile(Properties properties) {
+        if (properties.containsKey("LogFile") && isWrongFormat(properties, "LogFile")) {
+            System.out.println("Error 101");
+            System.exit(101);
+        }
+    }
+
     public static void validateLogFileSize(Properties properties) {
         if (properties.containsKey("LogFileSize") && (isWrongFormat(properties, "LogFileSize")
                 || isOutOfRange(properties, "LogFileSize"))) {
-            properties.remove("LogFileSize");
+            System.exit(102);
         }
     }
 
     public static void validateDebugLevel(Properties properties) {
         if (properties.containsKey("DebugLevel") && (isWrongFormat(properties, "DebugLevel")
                 || isOutOfRange(properties, "DebugLevel"))) {
-            properties.remove("DebugLevel");
+            System.exit(103);
         }
     }
 
     static void validateReportFormat(Properties properties) {
         if (properties.containsKey("ReportFormat") && isWrongValue(properties, "ReportFormat")) {
-            properties.remove("ReportFormat");
+            System.exit(104);
         }
     }
 
@@ -53,7 +65,7 @@ public class ProgramConfigReader {
             for (String server : properties.getProperty("Server").split(";")) {
                 if (isIPAbsent(server) || isPortAbsent(server) || isLoginAbsent(server) || isPasswordAbsent(server) ||
                         isIPWrongFormat(server) || isPortWrongFormat(server) || isLoginWrongFormat(server)) {
-                    break;
+                    System.exit(105);
                 } else {
                     validatedServers = validatedServers + server + ";";
                 }
@@ -65,17 +77,8 @@ public class ProgramConfigReader {
     static void validateProcedureExecutionTime(Properties properties) {
         if (properties.containsKey("ProcedureExecutionTime") && (isWrongFormat(properties, "ProcedureExecutionTime") ||
                 isOutOfRange(properties, "ProcedureExecutionTime"))) {
-            properties.remove("ProcedureExecutionTime");
+            System.exit(106);
         }
-    }
-
-    static boolean isWrongFormat(Properties properties, String key) {
-        try {
-            Integer.parseInt(properties.getProperty(key));
-        } catch (NumberFormatException e) {
-            return true;
-        }
-        return false;
     }
 
     public static boolean isIPAbsent(String server) {
@@ -119,6 +122,23 @@ public class ProgramConfigReader {
         return true;
     }
 
+    public static boolean isWrongFormat(Properties properties, String key) {
+        if (key.equals("LogFile")) {
+            try {
+                new File(properties.getProperty(key)).getCanonicalPath();
+            } catch (IOException e) {
+                return true;
+            }
+        } else if (key.equals("LogFileSize") || key.equals("DebugLevel") || key.equals("ProcedureExecutionTime")) {
+            try {
+                Integer.parseInt(properties.getProperty(key));
+            } catch (NumberFormatException e) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean isOutOfRange(Properties properties, String key) {
         if (key.equals("LogFileSize")) {
             if (Integer.valueOf(properties.getProperty("LogFileSize")).intValue() < 1
@@ -140,8 +160,11 @@ public class ProgramConfigReader {
     }
 
     public static boolean isWrongValue(Properties properties, String key) {
-        if (properties.getProperty(key).toLowerCase().equals("tick") || properties.getProperty(key).toLowerCase().equals("os") ||
-                properties.getProperty(key).toLowerCase().equals("complete")) return false;
+        if (key.equals("ReportFormat")) {
+            if (properties.getProperty(key).toLowerCase().equals("tick") || properties.getProperty(key).toLowerCase().equals("os")
+                    || properties.getProperty(key).toLowerCase().equals("complete"))
+                return false;
+        }
         return true;
     }
 }

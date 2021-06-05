@@ -27,7 +27,7 @@ public class App {
         Properties properties = ProgramConfigReader.loadProperties((new File("./config/program.properties")));
         WorkingEnvironment.setEnvironment(properties);
         WorkingObjects.setJobs(properties);
-        App.initLogger("app.log","%d %p %c [%t] %m%n");
+        App.initLogger("%d %p %c [%t] %m%n");
         logger.info("Starting " + Version.getVersionInfo() + " [" + WorkingEnvironment.getHostName() + "]");
         logger.info("using configuration file: './config/program.properties'");
     }
@@ -45,13 +45,13 @@ public class App {
         }
     }
 
-    private static void initLogger(String fileName, String pattern) {
+    private static void initLogger(String pattern) {
         ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
         LayoutComponentBuilder layoutBuilder = builder.newLayout("PatternLayout")
                 .addAttribute("pattern", pattern);
         AppenderComponentBuilder appenderBuilder = builder.newAppender("LogToRollingFile", "RollingFile")
-                .addAttribute("fileName", fileName)
-                .addAttribute("filePattern", fileName+"-%d{MM-dd-yy-HH-mm-ss}.log.")
+                .addAttribute("fileName", WorkingEnvironment.getLogFile())
+                .addAttribute("filePattern", WorkingEnvironment.getLogFile() + "-%d{MM-dd-yy-HH-mm-ss}.log.")
                 .add(layoutBuilder);
         if (!WorkingEnvironment.getLogFileSize().equals("0")) {
             ComponentBuilder triggeringPolicy = builder.newComponent("Policies")

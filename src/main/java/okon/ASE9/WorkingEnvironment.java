@@ -8,6 +8,9 @@ public class WorkingEnvironment {
     private static Properties environment = new Properties();
 
     public static void setEnvironment(Properties parameters) {
+        if (parameters.containsKey("LogFile")) {
+            environment.setProperty("LogFile", parameters.getProperty("LogFile"));
+        }
         if (parameters.containsKey("LogFileSize")) {
             environment.setProperty("LogFileSize", parameters.getProperty("LogFileSize"));
         }
@@ -40,9 +43,12 @@ public class WorkingEnvironment {
         try {
             result = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException ex) {
-            //System.out.println("Hostname can not be resolved");
         }
         return result;
+    }
+
+    public static String getLogFile() {
+        return environment.getProperty("LogFile", "./" + getApplicationName() + ".log");
     }
 
     public static String getLogFileSize() {
