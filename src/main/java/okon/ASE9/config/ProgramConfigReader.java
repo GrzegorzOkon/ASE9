@@ -4,9 +4,6 @@ import okon.ASE9.exception.ConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,14 +24,14 @@ public class ProgramConfigReader {
         validateLogFile(properties);
         validateLogFileSize(properties);
         validateDebugLevel(properties);
-        validateReportFormat(properties);
+        validateReportFile(properties);
+        validateReportType(properties);
         validateServer(properties);
         validateProcedureExecutionTime(properties);
     }
 
     public static void validateLogFile(Properties properties) {
         if (properties.containsKey("LogFile") && isWrongFormat(properties, "LogFile")) {
-            System.out.println("Error 101");
             System.exit(101);
         }
     }
@@ -53,9 +50,15 @@ public class ProgramConfigReader {
         }
     }
 
-    static void validateReportFormat(Properties properties) {
-        if (properties.containsKey("ReportFormat") && isWrongValue(properties, "ReportFormat")) {
+    public static void validateReportFile(Properties properties) {
+        if (properties.containsKey("ReportFile") && isWrongFormat(properties, "ReportFile")) {
             System.exit(104);
+        }
+    }
+
+    static void validateReportType(Properties properties) {
+        if (properties.containsKey("ReportType") && isWrongValue(properties, "ReportType")) {
+            System.exit(105);
         }
     }
 
@@ -65,7 +68,7 @@ public class ProgramConfigReader {
             for (String server : properties.getProperty("Server").split(";")) {
                 if (isIPAbsent(server) || isPortAbsent(server) || isLoginAbsent(server) || isPasswordAbsent(server) ||
                         isIPWrongFormat(server) || isPortWrongFormat(server) || isLoginWrongFormat(server)) {
-                    System.exit(105);
+                    System.exit(106);
                 } else {
                     validatedServers = validatedServers + server + ";";
                 }
@@ -77,7 +80,7 @@ public class ProgramConfigReader {
     static void validateProcedureExecutionTime(Properties properties) {
         if (properties.containsKey("ProcedureExecutionTime") && (isWrongFormat(properties, "ProcedureExecutionTime") ||
                 isOutOfRange(properties, "ProcedureExecutionTime"))) {
-            System.exit(106);
+            System.exit(107);
         }
     }
 
@@ -123,7 +126,7 @@ public class ProgramConfigReader {
     }
 
     public static boolean isWrongFormat(Properties properties, String key) {
-        if (key.equals("LogFile")) {
+        if (key.equals("LogFile") || key.equals("ReportFile")) {
             try {
                 new File(properties.getProperty(key)).getCanonicalPath();
             } catch (IOException e) {
@@ -160,7 +163,7 @@ public class ProgramConfigReader {
     }
 
     public static boolean isWrongValue(Properties properties, String key) {
-        if (key.equals("ReportFormat")) {
+        if (key.equals("ReportType")) {
             if (properties.getProperty(key).toLowerCase().equals("tick") || properties.getProperty(key).toLowerCase().equals("os")
                     || properties.getProperty(key).toLowerCase().equals("complete"))
                 return false;

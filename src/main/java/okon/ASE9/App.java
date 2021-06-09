@@ -64,23 +64,6 @@ public class App {
         rootLogger.add(builder.newAppenderRef("LogToRollingFile"));
         builder.add(rootLogger);
         Configurator.reconfigure(builder.build());
-
-
-        //builder.setStatusLevel(Level.DEBUG);
-        //builder.setConfigurationName("DefaultLogger");
-
-        // create a console appender
-        /*AppenderComponentBuilder appenderBuilder = builder.newAppender("Console", "CONSOLE").addAttribute("target",
-                ConsoleAppender.Target.SYSTEM_OUT);
-        appenderBuilder.add(builder.newLayout("PatternLayout")
-                .addAttribute("pattern", pattern));
-        RootLoggerComponentBuilder rootLogger = builder.newRootLogger(Level.DEBUG);
-        rootLogger.add(builder.newAppenderRef("Console"));
-
-        builder.add(appenderBuilder);*/
-
-        // create a rolling file appender
-
     }
 
     static Options createOptions() {

@@ -15,8 +15,8 @@ public class ReportManager {
     private List<Report> customizeReports() {
         List<Report> result = new ArrayList<>();
         for (List<DataExtraction> extraction : extractions) {
-            ReportFormatter customizedFormatter = new ReportFormatterFactory().make(extraction, WorkingEnvironment.getReportFormat());
-            ReportBuffer customizedBuffer = new ReportBufferFactory().make(extraction, WorkingEnvironment.getReportFormat(), customizedFormatter);
+            ReportFormatter customizedFormatter = new ReportFormatterFactory().make(extraction, WorkingEnvironment.getReportType());
+            ReportBuffer customizedBuffer = new ReportBufferFactory().make(extraction, WorkingEnvironment.getReportType(), customizedFormatter);
             result.add(new Report(extraction, customizedBuffer));
         }
         return result;

@@ -17,6 +17,12 @@ public class WorkingEnvironment {
         if (parameters.containsKey("DebugLevel")) {
             environment.setProperty("DebugLevel", parameters.getProperty("DebugLevel"));
         }
+        if (parameters.containsKey("ReportFile")) {
+            environment.setProperty("ReportFile", parameters.getProperty("ReportFile"));
+        }
+        if (parameters.containsKey("ReportType")) {
+            environment.setProperty("ReportType", parameters.getProperty("ReportType"));
+        }
         if (parameters.containsKey("ProcedureExecutionTime")) {
             environment.setProperty("ProcedureExecutionTime", formatProcedureExecutionTime(parameters.getProperty("ProcedureExecutionTime")));
         }
@@ -59,8 +65,12 @@ public class WorkingEnvironment {
         return Integer.valueOf(environment.getProperty("DebugLevel", "3"));
     }
 
-    public static String getReportFormat() {
-        return environment.getProperty("ReportFormat", "os");
+    public static String getReportFile() {
+        return environment.getProperty("ReportFile", "./" + getApplicationName() + ".txt");
+    }
+
+    public static String getReportType() {
+        return environment.getProperty("ReportType", "os");
     }
 
     public static String getProcedureExecutionTime() {
