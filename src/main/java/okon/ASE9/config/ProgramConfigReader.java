@@ -28,6 +28,7 @@ public class ProgramConfigReader {
         validateReportType(properties);
         validateServer(properties);
         validateProcedureExecutionTime(properties);
+        validateThreadSum(properties);
     }
 
     public static void validateLogFile(Properties properties) {
@@ -84,6 +85,13 @@ public class ProgramConfigReader {
         }
     }
 
+    static void validateThreadSum(Properties properties) {
+        if (properties.containsKey("ThreadSum") && (isWrongFormat(properties, "ThreadSum") ||
+                isOutOfRange(properties, "ThreadSum"))) {
+            System.exit(108);
+        }
+    }
+
     public static boolean isIPAbsent(String server) {
         if (server.contains(":") && server.substring(0, server.indexOf(':')).length() > 0) return false;
         return true;
@@ -132,7 +140,8 @@ public class ProgramConfigReader {
             } catch (IOException e) {
                 return true;
             }
-        } else if (key.equals("LogFileSize") || key.equals("DebugLevel") || key.equals("ProcedureExecutionTime")) {
+        } else if (key.equals("LogFileSize") || key.equals("DebugLevel") || key.equals("ProcedureExecutionTime") ||
+                key.equals("ThreadSum")) {
             try {
                 Integer.parseInt(properties.getProperty(key));
             } catch (NumberFormatException e) {
@@ -156,6 +165,11 @@ public class ProgramConfigReader {
         } else if (key.equals("ProcedureExecutionTime")) {
             if (Integer.valueOf(properties.getProperty("ProcedureExecutionTime")).intValue() < 0
                     || Integer.valueOf(properties.getProperty("ProcedureExecutionTime")).intValue() > 86400) {
+                return true;
+            }
+        } else if (key.equals("ThreadSum")) {
+            if (Integer.valueOf(properties.getProperty("ThreadSum")).intValue() < 1
+                || Integer.valueOf(properties.getProperty("ThreadSum")).intValue() > 10) {
                 return true;
             }
         }

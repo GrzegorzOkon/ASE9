@@ -120,7 +120,7 @@ public class App {
 
     static void startThreadPool() {
         logger.debug("In startThreadPool()");
-        int threadSum = WorkingObjects.jobs.size();
+        int threadSum = Integer.valueOf(WorkingEnvironment.getThreadSum());
         logger.debug("Thread sum: " + threadSum);
         Thread[] threads = new Thread[threadSum];
         for (int i = 0; i < threadSum; i++) {

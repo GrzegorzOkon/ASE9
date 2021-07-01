@@ -26,6 +26,9 @@ public class WorkingEnvironment {
         if (parameters.containsKey("ProcedureExecutionTime")) {
             environment.setProperty("ProcedureExecutionTime", formatProcedureExecutionTime(parameters.getProperty("ProcedureExecutionTime")));
         }
+        if (parameters.containsKey("ThreadSum")) {
+            environment.setProperty("ThreadSum", parameters.getProperty("ThreadSum"));
+        }
         environment.setProperty("ApplicationName", checkJarFileName());
         environment.setProperty("HostName", checkHostName());
     }
@@ -75,6 +78,10 @@ public class WorkingEnvironment {
 
     public static String getProcedureExecutionTime() {
         return environment.getProperty("ProcedureExecutionTime", "00:00:10");
+    }
+
+    public static String getThreadSum() {
+        return environment.getProperty("ThreadSum", "1");
     }
 
     public static String getApplicationName() {
