@@ -23,6 +23,9 @@ public class WorkingEnvironment {
         if (parameters.containsKey("ReportType")) {
             environment.setProperty("ReportType", parameters.getProperty("ReportType"));
         }
+        if (parameters.containsKey("MaskType")) {
+            environment.setProperty("MaskType", parameters.getProperty("MaskType"));
+        }
         if (parameters.containsKey("ProcedureExecutionTime")) {
             environment.setProperty("ProcedureExecutionTime", formatProcedureExecutionTime(parameters.getProperty("ProcedureExecutionTime")));
         }
@@ -74,6 +77,10 @@ public class WorkingEnvironment {
 
     public static String getReportType() {
         return environment.getProperty("ReportType", "os");
+    }
+
+    public static String getMaskType() {
+        return environment.getProperty("MaskType", "unmasked");
     }
 
     public static String getProcedureExecutionTime() {

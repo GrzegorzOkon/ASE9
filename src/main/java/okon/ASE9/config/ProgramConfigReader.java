@@ -27,6 +27,7 @@ public class ProgramConfigReader {
         validateReportFile(properties);
         validateReportType(properties);
         validateServer(properties);
+        validateMaskType(properties);
         validateProcedureExecutionTime(properties);
         validateThreadSum(properties);
     }
@@ -78,17 +79,23 @@ public class ProgramConfigReader {
         }
     }
 
+    static void validateMaskType(Properties properties) {
+        if (properties.containsKey("MaskType") && isWrongValue(properties, "MaskType")) {
+            System.exit(107);
+        }
+    }
+
     static void validateProcedureExecutionTime(Properties properties) {
         if (properties.containsKey("ProcedureExecutionTime") && (isWrongFormat(properties, "ProcedureExecutionTime") ||
                 isOutOfRange(properties, "ProcedureExecutionTime"))) {
-            System.exit(107);
+            System.exit(108);
         }
     }
 
     static void validateThreadSum(Properties properties) {
         if (properties.containsKey("ThreadSum") && (isWrongFormat(properties, "ThreadSum") ||
                 isOutOfRange(properties, "ThreadSum"))) {
-            System.exit(108);
+            System.exit(109);
         }
     }
 
@@ -181,6 +188,11 @@ public class ProgramConfigReader {
             if (properties.getProperty(key).toLowerCase().equals("tick") || properties.getProperty(key).toLowerCase().equals("os")
                     || properties.getProperty(key).toLowerCase().equals("complete"))
                 return false;
+        } else if (key.equals("MaskType")) {
+            if (properties.getProperty(key).toLowerCase().equals("unmasked")
+                    || properties.getProperty(key).toLowerCase().equals("hex")) {
+                return false;
+            }
         }
         return true;
     }
