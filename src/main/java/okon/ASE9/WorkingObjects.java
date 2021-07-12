@@ -17,7 +17,8 @@ public class WorkingObjects {
                 int port = Integer.valueOf(substringPort(servers[iter]));
                 String login = substringLogin(servers[iter]);
                 String password = unmask(substringPasssword(servers[iter]));
-                jobs.add(new Job(ip, port, login, password));
+                String alias = substringAlias(servers[iter]);
+                jobs.add(new Job(ip, port, login, password, alias));
             }
         }
     }
@@ -36,6 +37,10 @@ public class WorkingObjects {
 
     private static String substringPasssword(String server) {
         return server.substring(server.indexOf(",") + 1, server.indexOf("]"));
+    }
+
+    private static String substringAlias(String server) {
+        return server.substring(server.indexOf("{") + 1, server.indexOf("}"));
     }
 
     private static String unmask(String password) {

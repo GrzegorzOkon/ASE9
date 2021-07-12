@@ -68,8 +68,9 @@ public class ProgramConfigReader {
         if (properties.containsKey("Server")) {
             String validatedServers = "";
             for (String server : properties.getProperty("Server").split(";")) {
-                if (isIPAbsent(server) || isPortAbsent(server) || isLoginAbsent(server) || isPasswordAbsent(server) ||
-                        isIPWrongFormat(server) || isPortWrongFormat(server) || isLoginWrongFormat(server)) {
+                if (isIPAbsent(server) || isPortAbsent(server) || isLoginAbsent(server) || isPasswordAbsent(server)
+                        || isAliasAbsent(server) || isIPWrongFormat(server) || isPortWrongFormat(server)
+                        || isLoginWrongFormat(server)) {
                     System.exit(106);
                 } else {
                     validatedServers = validatedServers + server + ";";
@@ -116,6 +117,11 @@ public class ProgramConfigReader {
 
     public static boolean isPasswordAbsent(String server) {
         if (server.contains(",") && server.contains("]") && server.substring(server.indexOf(",") + 1, server.indexOf("]")).length() > 0) return false;
+        return true;
+    }
+
+    public static boolean isAliasAbsent(String server) {
+        if (server.contains("{") && server.contains("}") && server.substring(server.indexOf("{") + 1, server.indexOf("}")).length() > 0) return false;
         return true;
     }
 
