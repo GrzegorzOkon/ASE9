@@ -26,6 +26,7 @@ public class ProgramConfigReader {
         validateDebugLevel(properties);
         validateReportFile(properties);
         validateReportType(properties);
+        validateReportStyle(properties);
         validateServer(properties);
         validateMaskType(properties);
         validateProcedureExecutionTime(properties);
@@ -64,6 +65,12 @@ public class ProgramConfigReader {
         }
     }
 
+    static void validateReportStyle(Properties properties) {
+        if (properties.containsKey("ReportStyle") && isWrongValue(properties, "ReportStyle")) {
+            System.exit(106);
+        }
+    }
+
     static void validateServer(Properties properties) {
         if (properties.containsKey("Server")) {
             String validatedServers = "";
@@ -71,7 +78,7 @@ public class ProgramConfigReader {
                 if (isIPAbsent(server) || isPortAbsent(server) || isLoginAbsent(server) || isPasswordAbsent(server)
                         || isAliasAbsent(server) || isIPWrongFormat(server) || isPortWrongFormat(server)
                         || isLoginWrongFormat(server)) {
-                    System.exit(106);
+                    System.exit(107);
                 } else {
                     validatedServers = validatedServers + server + ";";
                 }
@@ -82,21 +89,21 @@ public class ProgramConfigReader {
 
     static void validateMaskType(Properties properties) {
         if (properties.containsKey("MaskType") && isWrongValue(properties, "MaskType")) {
-            System.exit(107);
+            System.exit(108);
         }
     }
 
     static void validateProcedureExecutionTime(Properties properties) {
         if (properties.containsKey("ProcedureExecutionTime") && (isWrongFormat(properties, "ProcedureExecutionTime") ||
                 isOutOfRange(properties, "ProcedureExecutionTime"))) {
-            System.exit(108);
+            System.exit(109);
         }
     }
 
     static void validateThreadSum(Properties properties) {
         if (properties.containsKey("ThreadSum") && (isWrongFormat(properties, "ThreadSum") ||
                 isOutOfRange(properties, "ThreadSum"))) {
-            System.exit(109);
+            System.exit(110);
         }
     }
 
@@ -194,6 +201,11 @@ public class ProgramConfigReader {
             if (properties.getProperty(key).toLowerCase().equals("tick") || properties.getProperty(key).toLowerCase().equals("os")
                     || properties.getProperty(key).toLowerCase().equals("complete"))
                 return false;
+        } else if (key.equals("ReportStyle")) {
+            if (properties.getProperty(key).toLowerCase().equals("short") || properties.getProperty(key).toLowerCase().equals("normal")
+                    || properties.getProperty(key).toLowerCase().equals("decorative")) {
+                return false;
+            }
         } else if (key.equals("MaskType")) {
             if (properties.getProperty(key).toLowerCase().equals("unmasked")
                     || properties.getProperty(key).toLowerCase().equals("hex")) {

@@ -61,7 +61,7 @@ public class ReportFormatterPooledOS extends ReportFormatter {
     }*/
 
     @Override
-    public String format(String[] input) {
+    public String formatBody(String[] input) {
         return String.format(format.toString(), input);
     }
 }

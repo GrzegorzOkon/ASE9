@@ -18,12 +18,12 @@ public class ReportBufferStandardTick extends ReportBuffer {
     @Override
     public String buffer() {
         StringBuilder result = new StringBuilder();
-        result.append("*** " + this.extractions.get(0).getAlias() + " (" + this.extractions.get(0).getServerIP() + ") ***\n\n");
-        result.append(formatter.format(new String[]{"CPU Busy", "I/O Busy", "Total Busy"}) + "\n");
-        result.append(formatter.format(new String[]{"--------", "--------", "----------"}) + "\n");
+        result.append(formatter.formatHeader(new String[]{this.extractions.get(0).getAlias(), this.extractions.get(0).getServerIP()}) + "\n\n");
+        result.append(formatter.formatBody(new String[]{"CPU Busy", "I/O Busy", "Total Busy"}) + "\n");
+        result.append(formatter.formatBody(new String[]{"--------", "--------", "----------"}) + "\n");
         for (DataExtraction extraction : this.extractions) {
             if (extraction instanceof PerformanceExtractionStandard) {
-                String formattedRow = formatter.format(new String[]{((PerformanceExtractionStandard) extraction).getCpuBusy() + "%",
+                String formattedRow = formatter.formatBody(new String[]{((PerformanceExtractionStandard) extraction).getCpuBusy() + "%",
                         ((PerformanceExtractionStandard) extraction).getIoBusy() + "%",
                         computeBusy(((PerformanceExtractionStandard) extraction).getIdle()) + "%"});
                 result.append(formattedRow + "\n");

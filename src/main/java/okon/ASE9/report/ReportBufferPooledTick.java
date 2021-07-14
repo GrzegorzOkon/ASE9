@@ -18,12 +18,12 @@ public class ReportBufferPooledTick extends ReportBuffer {
     @Override
     public String buffer() {
         StringBuilder result = new StringBuilder();
-        result.append("*** " + this.extractions.get(0).getAlias() + " (" + this.extractions.get(0).getServerIP() + ") ***\n\n");
-        result.append(formatter.format(new String[]{"Thread Pool", "User Busy (Tick)", "System Busy (Tick)", "IO Busy (Tick)", "Total Busy (Tick)"}) + "\n");
-        result.append(formatter.format(new String[]{"-----------", "----------------", "------------------", "--------------", "-----------------"}) + "\n");
+        result.append(formatter.formatHeader(new String[]{this.extractions.get(0).getAlias(), this.extractions.get(0).getServerIP()}) + "\n\n");
+        result.append(formatter.formatBody(new String[]{"Thread Pool", "User Busy (Tick)", "System Busy (Tick)", "IO Busy (Tick)", "Total Busy (Tick)"}) + "\n");
+        result.append(formatter.formatBody(new String[]{"-----------", "----------------", "------------------", "--------------", "-----------------"}) + "\n");
         for (DataExtraction extraction : this.extractions) {
             if (extraction instanceof PerformanceExtractionPooled) {
-                String formattedRow = formatter.format(new String[]{extraction.getThreadPool(),
+                String formattedRow = formatter.formatBody(new String[]{extraction.getThreadPool(),
                         ((PerformanceExtractionPooled) extraction).getUserBusyTick() + "%", ((PerformanceExtractionPooled) extraction).getSystemBusyTick() + "%",
                         ((PerformanceExtractionPooled) extraction).getIoBusyTick() + "%", computeBusy(((PerformanceExtractionPooled) extraction).getIdleTick()) + "%"});
                 result.append(formattedRow + "\n");

@@ -23,6 +23,9 @@ public class WorkingEnvironment {
         if (parameters.containsKey("ReportType")) {
             environment.setProperty("ReportType", parameters.getProperty("ReportType"));
         }
+        if (parameters.containsKey("ReportStyle")) {
+            environment.setProperty("ReportStyle", parameters.getProperty("ReportStyle"));
+        }
         if (parameters.containsKey("MaskType")) {
             environment.setProperty("MaskType", parameters.getProperty("MaskType"));
         }
@@ -77,6 +80,10 @@ public class WorkingEnvironment {
 
     public static String getReportType() {
         return environment.getProperty("ReportType", "os");
+    }
+
+    public static String getReportStyle() {
+        return environment.getProperty("ReportStyle", "normal");
     }
 
     public static String getMaskType() {
