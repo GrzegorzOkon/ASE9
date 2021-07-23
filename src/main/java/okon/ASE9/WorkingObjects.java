@@ -1,13 +1,13 @@
 package okon.ASE9;
 
+import okon.ASE9.messages.DataExtraction;
 import okon.ASE9.security.HexDecryptor;
 
-import java.util.LinkedList;
-import java.util.Properties;
-import java.util.Queue;
+import java.util.*;
 
 public class WorkingObjects {
     public static final Queue<Job> jobs = new LinkedList<>();
+    public static final List<List<DataExtraction>> extractions = new ArrayList();
 
     public static void setJobs(Properties parameters) {
         if (parameters.containsKey("Server") && !parameters.getProperty("Server").equals("")) {

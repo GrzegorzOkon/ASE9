@@ -1,6 +1,7 @@
 package okon.ASE9.report;
 
 import okon.ASE9.messages.DataExtraction;
+import okon.ASE9.messages.ExceptionDataExtraction;
 import okon.ASE9.messages.PerformanceExtractionPooled;
 import okon.ASE9.messages.PerformanceExtractionStandard;
 
@@ -14,7 +15,7 @@ public class ReportFormatterFactory {
             return new ReportFormatterPooledTickOS();
         } else if (extraction.get(0) instanceof PerformanceExtractionPooled) {
             return new ReportFormatterPooledOS();
-        } else if (extraction.get(0) instanceof PerformanceExtractionStandard) {
+        } else if (extraction.get(0) instanceof PerformanceExtractionStandard || extraction.get(0) instanceof ExceptionDataExtraction) {
             return new ReportFormatterStandardTick();
         }
         return null;

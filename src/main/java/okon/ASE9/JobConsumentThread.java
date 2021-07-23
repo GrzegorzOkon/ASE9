@@ -1,10 +1,8 @@
 package okon.ASE9;
 
-import okon.ASE9.messages.DataExtraction;
-
 import java.util.List;
-
-import static okon.ASE9.App.extractions;
+import okon.ASE9.messages.DataExtraction;
+import static okon.ASE9.WorkingObjects.extractions;
 
 public class JobConsumentThread extends Thread {
     @Override

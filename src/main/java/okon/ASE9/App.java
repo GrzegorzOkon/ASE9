@@ -19,7 +19,7 @@ import java.util.*;
 
 public class App {
     private static final Logger logger = LogManager.getLogger(App.class);
-    public static final List<List<DataExtraction>> extractions = new ArrayList();
+    //public static final List<List<DataExtraction>> extractions = new ArrayList();
 
     static final String CONNECTION_EXCEPTION_COMMUNICATE = "connection error to";
 

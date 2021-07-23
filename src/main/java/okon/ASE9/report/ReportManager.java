@@ -5,7 +5,7 @@ import okon.ASE9.messages.DataExtraction;
 
 import java.util.ArrayList;
 import java.util.List;
-import static okon.ASE9.App.extractions;
+import static okon.ASE9.WorkingObjects.extractions;
 
 public class ReportManager {
     public void print() {
